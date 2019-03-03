@@ -8,6 +8,7 @@ main();
 
 var c;
 var c1;
+var g;
 
 function main() {
 
@@ -16,7 +17,8 @@ function main() {
   const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
 
   c = new cube(gl, [2, 5.0, -3.0]);
-  c1 = new cube(gl, [1.5, 0.0, -6.0]);
+  c1 = new cube(gl, [2, -12, -8.0]);
+  g = new ground(gl, [0, -2, 0]);
   // If we don't have a GL context, give up now
 
   if (!gl) {
@@ -126,28 +128,22 @@ function drawScene(gl, programInfo, deltaTime) {
 
   // Set the drawing position to the "identity" point, which is
   // the center of the scene.
-    var cameraMatrix = mat4.create();
-    mat4.translate(cameraMatrix, cameraMatrix, [2, 5, 0]);
-    var cameraPosition = [
-      cameraMatrix[12],
-      cameraMatrix[13],
-      cameraMatrix[14],
-    ];
-
-    var up = [0, 1, 0];
-
-    mat4.lookAt(cameraMatrix, cameraPosition, c.pos, up);
-
-    var viewMatrix = cameraMatrix;//mat4.create();
-
-    //mat4.invert(viewMatrix, cameraMatrix);
-
-    var viewProjectionMatrix = mat4.create();
-
-    mat4.multiply(viewProjectionMatrix, projectionMatrix, viewMatrix);
-
-  c.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
-  //c1.drawCube(gl, projectionMatrix, programInfo, deltaTime);
+  var cameraMatrix = mat4.create();
+  mat4.translate(cameraMatrix, cameraMatrix, [0, 10, 4000]);
+  var cameraPosition = [
+    cameraMatrix[12],
+    cameraMatrix[13],
+    cameraMatrix[14],
+  ];
+  var up = [0, 1, 0];
+  mat4.lookAt(cameraMatrix, cameraPosition, [0.00000, 10, 0], up);
+  var viewMatrix = cameraMatrix;//mat4.create();
+  //mat4.invert(viewMatrix, cameraMatrix);
+  var viewProjectionMatrix = mat4.create();
+  mat4.multiply(viewProjectionMatrix, projectionMatrix, viewMatrix);
+  g.drawGround(gl, viewProjectionMatrix, programInfo);
+  //c.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
+  //c1.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
 
 }
 

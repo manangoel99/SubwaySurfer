@@ -78,6 +78,50 @@ let rails = class {
 
     ];
 
+    console.log([].concat.apply([], [-2.25, 0.75, (6 * i) - 8001]));
+
+    for (var i = 2000; i > 0; i -= 1) {
+      //Top
+      Array.prototype.push.apply(this.positions, [-2.25, 0.75, (6 * i) - 8001])
+      Array.prototype.push.apply(this.positions, [2.25, 0.75, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [-2.25, 0.75, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [2.25, 0.75, (6 * i) - 7999]);
+
+      //Bottom
+      Array.prototype.push.apply(this.positions, [-2.25, 0.5, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [2.25, 0.5, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [-2.25, 0.5, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [2.25, 0.5, (6 * i) - 7999]);
+
+      //Front
+      Array.prototype.push.apply(this.positions, [-2.25, 0.75, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [-2.25, 0.5, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [2.25, 0.75, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [2.25, 0.5, (6 * i) - 7999]);
+
+      //Back
+      Array.prototype.push.apply(this.positions, [-2.25, 0.75, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [-2.25, 0.5, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [2.25, 0.75, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [2.25, 0.5, (6 * i) - 8001]);
+
+      //Right
+      Array.prototype.push.apply(this.positions, [2.25, 0.75, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [2.25, 0.5, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [2.25, 0.75, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [2.25, 0.5, (6 * i) - 8001]);
+
+      //Left
+      Array.prototype.push.apply(this.positions, [-2.25, 0.75, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [-2.25, 0.5, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [-2.25, 0.75, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [-2.25, 0.5, (6 * i) - 8001]);
+
+
+    }
+
+    console.log(this.positions.length)
+
     this.pos = pos;
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.positions), gl.STATIC_DRAW);
@@ -95,9 +139,18 @@ let rails = class {
         [0, 0, 0, 1],
         [0, 0, 0, 1],
         [0, 0, 0, 1],
-
-
     ];
+
+    for (var i = 0; i < 2000; i += 1) {
+      this.faceColors.push([1, 1, 1, 1]);
+      this.faceColors.push([1, 1, 1, 1]);
+      this.faceColors.push([1, 1, 1, 1]);
+      this.faceColors.push([1, 1, 1, 1]);
+      this.faceColors.push([1, 1, 1, 1]);
+      this.faceColors.push([1, 1, 1, 1]);
+    }
+
+    console.log(this.faceColors.length);
 
     var colors = [];
 
@@ -120,7 +173,7 @@ let rails = class {
     const indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
-    const indices = [
+    let indices = [
       0, 1, 2,  1, 2, 3,
       4, 5, 6,  5, 6, 7,
       8, 9, 10, 9, 10, 11,
@@ -136,6 +189,22 @@ let rails = class {
       44, 45, 46, 45, 46, 47,
     ];
 
+    for (var i = 0; i < 48000; i += 24) {
+      //Top
+      Array.prototype.push.apply(indices, [48 + i, 48 + i + 1, 48 + i + 2, 48 + i + 1, 48 + i + 2, 48 + i + 3]);
+      //Bottom
+      Array.prototype.push.apply(indices, [48 + i + 4, 48 + i + 5, 48 + i + 6, 48 + i + 5, 48 + i + 6, 48 + i + 7]);
+      //Front
+      Array.prototype.push.apply(indices, [48 + i + 8, 48 + i + 9, 48 + i + 10, 48 + i + 9, 48 + i + 10, 48 + i + 11]);
+      //Back
+      Array.prototype.push.apply(indices, [48 + i + 12, 48 + i + 13, 48 + i + 14, 48 + i + 13, 48 + i + 14, 48 + i + 15]);
+      //Right
+      Array.prototype.push.apply(indices, [48 + i + 16, 48 + i + 17, 48 + i + 18, 48 + i + 17, 48 + i + 18, 48 + i + 19]);
+      //Left
+      Array.prototype.push.apply(indices, [48 + i + 20, 48 + i + 21, 48 + i + 22, 48 + i + 21, 48 + i + 22, 48 + i + 23]);
+    }
+
+    console.log(indices.length);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
         new Uint16Array(indices), gl.STATIC_DRAW);
 
@@ -210,7 +279,7 @@ let rails = class {
         modelViewMatrix);
 
     {
-        const vertexCount = 72;
+        const vertexCount = 72 + 2000 * 36;
         const type = gl.UNSIGNED_SHORT;
         const offset = 0;
         gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);

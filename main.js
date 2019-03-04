@@ -141,7 +141,7 @@ function drawScene(gl, programInfo, deltaTime) {
   //mat4.invert(viewMatrix, cameraMatrix);
   var viewProjectionMatrix = mat4.create();
   mat4.multiply(viewProjectionMatrix, projectionMatrix, viewMatrix);
-  g.drawGround(gl, viewProjectionMatrix, programInfo);
+  g.drawGround(gl, viewProjectionMatrix, programInfo, initShaderProgram);
   //c.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
   //c1.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
 

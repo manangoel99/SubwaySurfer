@@ -12,6 +12,7 @@ var g;
 var r1;
 var r2;
 var r3;
+var w;
 
 $(document).keypress((event) => {
   console.log(String.fromCharCode(event.which));
@@ -29,6 +30,7 @@ function main() {
   r1 = new rails(gl, [-15, -2, 0]);
   r2 = new rails(gl, [0, -2, 0]);
   r3 = new rails(gl, [15, -2, 0]);
+  w = new walls(gl, [0, -2, 0]);
   // If we don't have a GL context, give up now
 
   if (!gl) {
@@ -161,6 +163,11 @@ function drawScene(gl, programInfo, deltaTime) {
   r1.drawRail(gl, viewProjectionMatrix, programInfo);
   r2.drawRail(gl, viewProjectionMatrix, programInfo);
   r3.drawRail(gl, viewProjectionMatrix, programInfo);
+  w.drawGround(gl, viewProjectionMatrix, programInfo, initShaderProgram);
+  
+  r1.pos[2] += 0.075;
+  r2.pos[2] += 0.075;
+  r3.pos[2] += 0.075;
 
 }
 

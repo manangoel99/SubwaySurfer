@@ -78,49 +78,45 @@ let rails = class {
 
     ];
 
-    console.log([].concat.apply([], [-2.25, 0.75, (6 * i) - 8001]));
-
     for (var i = 2000; i > 0; i -= 1) {
       //Top
-      Array.prototype.push.apply(this.positions, [-2.25, 0.75, (6 * i) - 8001])
-      Array.prototype.push.apply(this.positions, [2.25, 0.75, (6 * i) - 8001]);
-      Array.prototype.push.apply(this.positions, [-2.25, 0.75, (6 * i) - 7999]);
-      Array.prototype.push.apply(this.positions, [2.25, 0.75, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [-3, 0.75, (6 * i) - 8001])
+      Array.prototype.push.apply(this.positions, [3, 0.75, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [-3, 0.75, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [3, 0.75, (6 * i) - 7999]);
 
       //Bottom
-      Array.prototype.push.apply(this.positions, [-2.25, 0.5, (6 * i) - 8001]);
-      Array.prototype.push.apply(this.positions, [2.25, 0.5, (6 * i) - 8001]);
-      Array.prototype.push.apply(this.positions, [-2.25, 0.5, (6 * i) - 7999]);
-      Array.prototype.push.apply(this.positions, [2.25, 0.5, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [-3, 0.5, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [3, 0.5, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [-3, 0.5, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [3, 0.5, (6 * i) - 7999]);
 
       //Front
-      Array.prototype.push.apply(this.positions, [-2.25, 0.75, (6 * i) - 7999]);
-      Array.prototype.push.apply(this.positions, [-2.25, 0.5, (6 * i) - 7999]);
-      Array.prototype.push.apply(this.positions, [2.25, 0.75, (6 * i) - 7999]);
-      Array.prototype.push.apply(this.positions, [2.25, 0.5, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [-3, 0.75, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [-3, 0.5, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [3, 0.75, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [3, 0.5, (6 * i) - 7999]);
 
       //Back
-      Array.prototype.push.apply(this.positions, [-2.25, 0.75, (6 * i) - 8001]);
-      Array.prototype.push.apply(this.positions, [-2.25, 0.5, (6 * i) - 8001]);
-      Array.prototype.push.apply(this.positions, [2.25, 0.75, (6 * i) - 8001]);
-      Array.prototype.push.apply(this.positions, [2.25, 0.5, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [-3, 0.75, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [-3, 0.5, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [3, 0.75, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [3, 0.5, (6 * i) - 8001]);
 
       //Right
-      Array.prototype.push.apply(this.positions, [2.25, 0.75, (6 * i) - 7999]);
-      Array.prototype.push.apply(this.positions, [2.25, 0.5, (6 * i) - 7999]);
-      Array.prototype.push.apply(this.positions, [2.25, 0.75, (6 * i) - 8001]);
-      Array.prototype.push.apply(this.positions, [2.25, 0.5, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [3, 0.75, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [3, 0.5, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [3, 0.75, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [3, 0.5, (6 * i) - 8001]);
 
       //Left
-      Array.prototype.push.apply(this.positions, [-2.25, 0.75, (6 * i) - 7999]);
-      Array.prototype.push.apply(this.positions, [-2.25, 0.5, (6 * i) - 7999]);
-      Array.prototype.push.apply(this.positions, [-2.25, 0.75, (6 * i) - 8001]);
-      Array.prototype.push.apply(this.positions, [-2.25, 0.5, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [3, 0.75, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [3, 0.5, (6 * i) - 7999]);
+      Array.prototype.push.apply(this.positions, [3, 0.75, (6 * i) - 8001]);
+      Array.prototype.push.apply(this.positions, [3, 0.5, (6 * i) - 8001]);
 
 
     }
-
-    console.log(this.positions.length)
 
     this.pos = pos;
 
@@ -149,8 +145,6 @@ let rails = class {
       this.faceColors.push([1, 1, 1, 1]);
       this.faceColors.push([1, 1, 1, 1]);
     }
-
-    console.log(this.faceColors.length);
 
     var colors = [];
 
@@ -204,7 +198,6 @@ let rails = class {
       Array.prototype.push.apply(indices, [48 + i + 20, 48 + i + 21, 48 + i + 22, 48 + i + 21, 48 + i + 22, 48 + i + 23]);
     }
 
-    console.log(indices.length);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
         new Uint16Array(indices), gl.STATIC_DRAW);
 

@@ -9,6 +9,13 @@ main();
 var c;
 var c1;
 var g;
+var r1;
+var r2;
+var r3;
+
+$(document).keypress((event) => {
+  console.log(String.fromCharCode(event.which));
+});
 
 function main() {
 
@@ -19,6 +26,9 @@ function main() {
   c = new cube(gl, [2, 5.0, -3.0]);
   c1 = new cube(gl, [2, -12, -8.0]);
   g = new ground(gl, [0, -2, 0]);
+  r1 = new rails(gl, [-15, -2, 0]);
+  r2 = new rails(gl, [0, -2, 0]);
+  r3 = new rails(gl, [15, -2, 0]);
   // If we don't have a GL context, give up now
 
   if (!gl) {
@@ -96,7 +106,7 @@ function main() {
 // Draw the scene.
 //
 function drawScene(gl, programInfo, deltaTime) {
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
+  gl.clearColor(1.0, 1.0, 1.0, 1.0);  // Clear to black, fully opaque
   gl.clearDepth(1.0);                 // Clear everything
   gl.enable(gl.DEPTH_TEST);           // Enable depth testing
   gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
@@ -129,21 +139,28 @@ function drawScene(gl, programInfo, deltaTime) {
   // Set the drawing position to the "identity" point, which is
   // the center of the scene.
   var cameraMatrix = mat4.create();
-  mat4.translate(cameraMatrix, cameraMatrix, [0, 10, 4000]);
+  mat4.translate(cameraMatrix, cameraMatrix, [0, 10, 4025]);
+
   var cameraPosition = [
     cameraMatrix[12],
     cameraMatrix[13],
     cameraMatrix[14],
   ];
+
   var up = [0, 1, 0];
-  mat4.lookAt(cameraMatrix, cameraPosition, [0.00000, 10, 0], up);
-  var viewMatrix = cameraMatrix;//mat4.create();
-  //mat4.invert(viewMatrix, cameraMatrix);
+
+  mat4.lookAt(cameraMatrix, cameraPosition, [0, 0, -250], up);
+
+  var viewMatrix = cameraMatrix;
+
   var viewProjectionMatrix = mat4.create();
+
   mat4.multiply(viewProjectionMatrix, projectionMatrix, viewMatrix);
+
   g.drawGround(gl, viewProjectionMatrix, programInfo, initShaderProgram);
-  //c.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
-  //c1.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
+  r1.drawRail(gl, viewProjectionMatrix, programInfo);
+  r2.drawRail(gl, viewProjectionMatrix, programInfo);
+  r3.drawRail(gl, viewProjectionMatrix, programInfo);
 
 }
 

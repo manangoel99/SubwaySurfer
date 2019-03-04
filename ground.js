@@ -96,7 +96,7 @@ let ground = class {
 
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
             new Uint16Array(indices), gl.STATIC_DRAW);
-        
+
         const textureCoordBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
 
@@ -137,10 +137,10 @@ let ground = class {
 
         const vsSource = `
             attribute vec4 aVertexPosition;
-            attribute vec2 aTextureCoord;           
+            attribute vec2 aTextureCoord;
             uniform mat4 uModelViewMatrix;
-            uniform mat4 uProjectionMatrix;         
-            varying highp vec2 vTextureCoord;           
+            uniform mat4 uProjectionMatrix;
+            varying highp vec2 vTextureCoord;
             void main(void) {
               gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
               vTextureCoord = aTextureCoord;
@@ -238,4 +238,4 @@ let ground = class {
             gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
         }
     }
-}
+};

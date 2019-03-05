@@ -11,11 +11,18 @@ var c1;
 var g;
 var r1;
 var r2;
-var r3;
 var w;
+var p;
+
+var playerJumpStatus = false;
 
 $(document).keypress((event) => {
-  console.log(String.fromCharCode(event.which));
+  //console.log(event.which);
+
+  // if (String.fromCharCode(event.which))
+  if (event.which === 32 && playerJumpStatus === false) {
+    playerJumpStatus = true;
+  }
 });
 
 function main() {
@@ -27,10 +34,10 @@ function main() {
   c = new cube(gl, [2, 5.0, -3.0]);
   c1 = new cube(gl, [2, -12, -8.0]);
   g = new ground(gl, [0, -2, 0]);
-  r1 = new rails(gl, [-15, -2, 0]);
-  r2 = new rails(gl, [0, -2, 0]);
-  r3 = new rails(gl, [15, -2, 0]);
+  r1 = new rails(gl, [-7.5, -2, 0]);
+  r2 = new rails(gl, [7.5, -2, 0]);
   w = new walls(gl, [0, -2, 0]);
+  p = new player(gl, [-7, 0, 3995]);
   // If we don't have a GL context, give up now
 
   if (!gl) {
@@ -98,6 +105,7 @@ function main() {
     then = now;
 
     drawScene(gl, programInfo, deltaTime);
+    tick_elements();
 
     requestAnimationFrame(render);
   }
@@ -127,7 +135,7 @@ function drawScene(gl, programInfo, deltaTime) {
   const fieldOfView = 45 * Math.PI / 180;   // in radians
   const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
   const zNear = 0.1;
-  const zFar = 100.0;
+  const zFar = 1000.0;
   const projectionMatrix = mat4.create();
 
   // note: glmatrix.js always has the first argument
@@ -162,12 +170,8 @@ function drawScene(gl, programInfo, deltaTime) {
   g.drawGround(gl, viewProjectionMatrix, programInfo, initShaderProgram);
   r1.drawRail(gl, viewProjectionMatrix, programInfo);
   r2.drawRail(gl, viewProjectionMatrix, programInfo);
-  r3.drawRail(gl, viewProjectionMatrix, programInfo);
   w.drawGround(gl, viewProjectionMatrix, programInfo, initShaderProgram);
-  
-  r1.pos[2] += 0.075;
-  r2.pos[2] += 0.075;
-  r3.pos[2] += 0.075;
+  p.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
 
 }
 
@@ -219,4 +223,17 @@ function loadShader(gl, type, source) {
   }
 
   return shader;
+}
+
+
+tick_elements = () => {
+  r1.pos[2] += 0.075;
+  r2.pos[2] += 0.075;
+
+  p.tick(playerJumpStatus);
+
+  if (p.pos[1] <= 0.25 && p.pos[1] >= -0.25 && playerJumpStatus === true) {
+    playerJumpStatus = false
+  }
+
 }

@@ -278,5 +278,5 @@ let rails = class {
         gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
     }
 
-  }
+  };
 };

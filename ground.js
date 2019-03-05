@@ -20,6 +20,7 @@ function getTexture(gl, url) {
         pixel);
 
     const image = new Image();
+    image.crossOrigin = "anonymous";
     image.onload = function () {
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
@@ -39,6 +40,7 @@ function getTexture(gl, url) {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         }
     };
+    image.crossOrigin = "anonymous";
     image.src = url;
 
     return texture;

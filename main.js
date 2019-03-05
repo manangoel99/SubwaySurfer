@@ -15,6 +15,8 @@ var w;
 var p;
 
 var playerJumpStatus = false;
+var playerRightStatus = false;
+var playerLeftStatus = false;
 
 $(document).keypress((event) => {
   //console.log(event.which);
@@ -23,6 +25,16 @@ $(document).keypress((event) => {
   if (event.which === 32 && playerJumpStatus === false) {
     playerJumpStatus = true;
   }
+
+  if (event.which === 100) {
+    playerRightStatus = true;
+  }
+
+  if (event.which === 97) {
+    playerLeftStatus = true;
+  }
+
+  console.log(event.which);
 });
 
 function main() {
@@ -227,13 +239,21 @@ function loadShader(gl, type, source) {
 
 
 tick_elements = () => {
-  r1.pos[2] += 0.075;
-  r2.pos[2] += 0.075;
+  r1.pos[2] += 0.1;
+  r2.pos[2] += 0.1;
 
-  p.tick(playerJumpStatus);
+  p.tick(playerJumpStatus, playerRightStatus, playerLeftStatus);
 
   if (p.pos[1] <= 0.25 && p.pos[1] >= -0.25 && playerJumpStatus === true) {
     playerJumpStatus = false
+  }
+
+  if (p.pos[0] <= 7.25 && p.pos[0] >= 6.75 && playerRightStatus === true) {
+    playerRightStatus = false;
+  }
+
+  if (p.pos[0] >= -7.25 && p.pos[0] <= -6.75 && playerLeftStatus === true) {
+    playerLeftStatus = false;
   }
 
 }

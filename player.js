@@ -187,7 +187,7 @@ let player = class {
 
     }
 
-    tick = (playerJumpStatus) => {
+    tick = (playerJumpStatus, playerRightStatus, playerLeftStatus) => {
       if (playerJumpStatus === true) {
         this.pos[1] += this.velocity;
         this.velocity += this.acc;
@@ -195,6 +195,14 @@ let player = class {
 
       if (playerJumpStatus === false) {
         this.velocity = this.initVelocity;
+      }
+
+      if (playerRightStatus === true) {
+        this.pos[0] += 0.25;
+      }
+
+      if (playerLeftStatus === true) {
+        this.pos[0] -= 0.25;
       }
     };
 };

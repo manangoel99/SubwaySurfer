@@ -24,6 +24,7 @@ var initpos = 0;
 var co;
 
 var coin_arr;
+var StopObstacles;
 
 var playerJumpStatus = false;
 var playerRightStatus = false;
@@ -88,6 +89,23 @@ function main() {
   r2 = new rails(gl, [7.5, -2, 0]);
   w = new walls(gl, [0, -2, 3800]);
   p = new player(gl, [-7, 0, 3995]);
+  StopObstacles = [];
+
+  for (var i = 0; i < 10; i += 1) {
+
+    var x;
+
+    if (Math.round(Math.random() * 10) % 2 == 0) {
+      x = -7;
+    }
+
+    else {
+      x = 7;
+    }
+
+    var obs = new StopObstacle(gl, [x, -2, getRndInteger(4000, 2000)], initShaderProgram);
+    StopObstacles.push(obs);
+  }
   // If we don't have a GL context, give up now
 
   if (!gl) {
@@ -228,6 +246,11 @@ function drawScene(gl, programInfo, deltaTime) {
     element.drawCoin(gl, viewProjectionMatrix, programInfo);
   });
 
+  StopObstacles.forEach(element => {
+    element.drawObstacle(gl, viewProjectionMatrix, initShaderProgram);
+    console.log(element.pos);
+  });
+
 }
 
 //
@@ -284,7 +307,7 @@ function loadShader(gl, type, source) {
 tick_elements = () => {
   // r1.pos[2] += 0.1;
   // r2.pos[2] += 0.1;
-  p.pos[2] -= 0.1;
+  p.pos[2] -= 0.5;
   ScoreRender();
   initpos += 0.1;
 
@@ -292,7 +315,7 @@ tick_elements = () => {
 
   if ((p.velocity) == 0) {
     console.log(p.pos, p.velocity);
-  } 
+  }
 
   // console.log(p.pos);
 
@@ -323,7 +346,7 @@ tick_elements = () => {
       toBeDeleted = element;
       score += 1;
     }
-    
+
   }
 
   if (toBeDeleted != undefined) {

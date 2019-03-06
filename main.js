@@ -1,6 +1,10 @@
 var cubeRotation = 0.0;
 
-main();
+function getRndInteger(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+// main();
 
 //
 // Start here
@@ -13,10 +17,13 @@ var r1;
 var r2;
 var w;
 var p;
+var score = 0;
 
 var initpos = 0;
 
 var co;
+
+var coin_arr;
 
 var playerJumpStatus = false;
 var playerRightStatus = false;
@@ -34,22 +41,45 @@ $(document).keypress((event) => {
     jumpinitpos = initpos;
   }
 
-  if (event.which === 100 && playerLeftStatus === false) {
+  if (event.which === 100 && playerLeftStatus === false && p.pos[0] < 7) {
     playerRightStatus = true;
   }
 
-  if (event.which === 97 && playerRightStatus === false) {
+  if (event.which === 97 && playerRightStatus === false && p.pos[0] > -7) {
     playerLeftStatus = true;
   }
 
   // console.log(event.which);
 });
 
+function ScoreRender() {
+  $("#score").text(score);
+}
+
 function main() {
 
 
   const canvas = document.querySelector('#glcanvas');
   const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+
+  coin_arr = [];
+
+  for (var i = 0; i < 500; i += 1) {
+
+    var x;
+
+    if (Math.round(Math.random() * 10) % 2 == 0) {
+      x = -7;
+    }
+
+    else {
+      x = 7;
+    }
+
+    var coi = new coin(gl, [x, getRndInteger(7, 17), getRndInteger(4000, -8000)]);
+
+    coin_arr.push(coi);
+  }
 
   c = new cube(gl, [2, 5.0, -3.0]);
   c1 = new cube(gl, [2, -12, -8.0]);
@@ -194,6 +224,10 @@ function drawScene(gl, programInfo, deltaTime) {
   p.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
   // co.drawCoin(gl, viewProjectionMatrix, programInfo);
 
+  coin_arr.forEach(element => {
+    element.drawCoin(gl, viewProjectionMatrix, programInfo);
+  });
+
 }
 
 //
@@ -251,8 +285,16 @@ tick_elements = () => {
   // r1.pos[2] += 0.1;
   // r2.pos[2] += 0.1;
   p.pos[2] -= 0.1;
-
+  ScoreRender();
   initpos += 0.1;
+
+  // console.log(p.velocity);
+
+  if ((p.velocity) == 0) {
+    console.log(p.pos, p.velocity);
+  } 
+
+  // console.log(p.pos);
 
   // console.log(initpos);
 
@@ -261,7 +303,7 @@ tick_elements = () => {
   if (p.pos[1] <= 0.25 && p.pos[1] >= -0.25 && playerJumpStatus === true) {
     playerJumpStatus = false
     jumpfinalpos = initpos;
-    console.log(jumpfinalpos - jumpinitpos);
+    console.log(Math.round(jumpfinalpos - jumpinitpos));
   }
 
   if (p.pos[0] <= 7.25 && p.pos[0] >= 6.75 && playerRightStatus === true) {
@@ -270,6 +312,24 @@ tick_elements = () => {
 
   if (p.pos[0] >= -7.25 && p.pos[0] <= -6.75 && playerLeftStatus === true) {
     playerLeftStatus = false;
+  }
+
+  var toBeDeleted = undefined;
+
+  for (let i = 0; i < coin_arr.length; i += 1) {
+    const element = coin_arr[i];
+
+    if (element.detectCollision(p) === true) {
+      toBeDeleted = element;
+      score += 1;
+    }
+    
+  }
+
+  if (toBeDeleted != undefined) {
+    coin_arr = coin_arr.filter(function (value, index, arr) {
+      return value != toBeDeleted;
+    });
   }
 
 }

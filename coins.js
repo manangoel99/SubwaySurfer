@@ -11,7 +11,8 @@ let coin = class {
 
     var n = 100;
 
-    var radius = 2;
+    var radius = 1;
+    this.radius = radius;
 
     var angle = (2 * Math.PI) / n;
 
@@ -67,6 +68,8 @@ let coin = class {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
       new Uint16Array(indices), gl.STATIC_DRAW);
 
+    this.rotationspeed = Math.random() / 4;
+
     this.buffer = {
       position: this.positionBuffer,
       color: colorBuffer,
@@ -83,10 +86,12 @@ let coin = class {
       this.pos
     );
 
+    this.rotation += this.rotationspeed;
+
     mat4.rotate(modelViewMatrix,
       modelViewMatrix,
       this.rotation,
-      [1, 1, 1]);
+      [0, 1 , 0]);
 
     {
       const numComponents = 3;
@@ -151,5 +156,30 @@ let coin = class {
       gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
     }
 
-  }
+  };
+
+  detectCollision = (p) => {
+    var flag1 = false,
+        flag2 = false;
+
+    var quant = (p.pos[0] - this.pos[0]) * (p.pos[0] - this.pos[0]);
+    quant += (p.pos[1] - this.pos[1]) * (p.pos[1] - this.pos[1]);
+    quant -= (this.radius * this.radius);
+
+    if (quant <= 0) {
+      flag1 = true;
+    }
+
+    if ((p.pos[2] + 1 - this.pos[2]) * (p.pos[2] - 1 - this.pos[2]) < 0) {
+      flag2 = true;
+    }
+
+    if (flag1 === true && flag2 === true) {
+      return true;
+    }
+    else {
+      return false;
+    }
+    
+  };
 };

@@ -14,11 +14,16 @@ var r2;
 var w;
 var p;
 
+var initpos = 0;
+
 var co;
 
 var playerJumpStatus = false;
 var playerRightStatus = false;
 var playerLeftStatus = false;
+
+var jumpinitpos = 0;
+var jumpfinalpos = 0;
 
 $(document).keypress((event) => {
   //console.log(event.which);
@@ -26,6 +31,7 @@ $(document).keypress((event) => {
   // if (String.fromCharCode(event.which))
   if (event.which === 32 && playerJumpStatus === false) {
     playerJumpStatus = true;
+    jumpinitpos = initpos;
   }
 
   if (event.which === 100 && playerLeftStatus === false) {
@@ -36,7 +42,7 @@ $(document).keypress((event) => {
     playerLeftStatus = true;
   }
 
-  console.log(event.which);
+  // console.log(event.which);
 });
 
 function main() {
@@ -52,7 +58,6 @@ function main() {
   r2 = new rails(gl, [7.5, -2, 0]);
   w = new walls(gl, [0, -2, 3800]);
   p = new player(gl, [-7, 0, 3995]);
-  // co = new coin(gl, [-7.5, 1, 3990]);
   // If we don't have a GL context, give up now
 
   if (!gl) {
@@ -164,7 +169,7 @@ function drawScene(gl, programInfo, deltaTime) {
   // Set the drawing position to the "identity" point, which is
   // the center of the scene.
   var cameraMatrix = mat4.create();
-  mat4.translate(cameraMatrix, cameraMatrix, [0, 10, 4025]);
+  mat4.translate(cameraMatrix, cameraMatrix, [0, 10, p.pos[2] + 30]);
 
   var cameraPosition = [
     cameraMatrix[12],
@@ -243,13 +248,20 @@ function loadShader(gl, type, source) {
 
 
 tick_elements = () => {
-  r1.pos[2] += 0.1;
-  r2.pos[2] += 0.1;
+  // r1.pos[2] += 0.1;
+  // r2.pos[2] += 0.1;
+  p.pos[2] -= 0.1;
+
+  initpos += 0.1;
+
+  // console.log(initpos);
 
   p.tick(playerJumpStatus, playerRightStatus, playerLeftStatus);
 
   if (p.pos[1] <= 0.25 && p.pos[1] >= -0.25 && playerJumpStatus === true) {
     playerJumpStatus = false
+    jumpfinalpos = initpos;
+    console.log(jumpfinalpos - jumpinitpos);
   }
 
   if (p.pos[0] <= 7.25 && p.pos[0] >= 6.75 && playerRightStatus === true) {

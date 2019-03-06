@@ -97,7 +97,7 @@ let cube = class {
             position: this.positionBuffer,
             color: colorBuffer,
             indices: indexBuffer,
-        }
+        };
 
     }
 

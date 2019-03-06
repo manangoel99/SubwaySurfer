@@ -14,6 +14,8 @@ var r2;
 var w;
 var p;
 
+var co;
+
 var playerJumpStatus = false;
 var playerRightStatus = false;
 var playerLeftStatus = false;
@@ -48,8 +50,9 @@ function main() {
   g = new ground(gl, [0, -2, 0]);
   r1 = new rails(gl, [-7.5, -2, 0]);
   r2 = new rails(gl, [7.5, -2, 0]);
-  w = new walls(gl, [0, -2, 0]);
+  w = new walls(gl, [0, -2, 3800]);
   p = new player(gl, [-7, 0, 3995]);
+  // co = new coin(gl, [-7.5, 1, 3990]);
   // If we don't have a GL context, give up now
 
   if (!gl) {
@@ -184,6 +187,7 @@ function drawScene(gl, programInfo, deltaTime) {
   r2.drawRail(gl, viewProjectionMatrix, programInfo);
   w.drawGround(gl, viewProjectionMatrix, programInfo, initShaderProgram);
   p.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
+  // co.drawCoin(gl, viewProjectionMatrix, programInfo);
 
 }
 

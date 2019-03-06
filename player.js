@@ -198,11 +198,11 @@ let player = class {
       }
 
       if (playerRightStatus === true) {
-        this.pos[0] += 0.25;
+        this.pos[0] += 0.5;
       }
 
       if (playerLeftStatus === true) {
-        this.pos[0] -= 0.25;
+        this.pos[0] -= 0.5;
       }
     };
 };

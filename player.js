@@ -38,11 +38,11 @@ let player = class {
              1.0, -1.0, 1.0,
         ];
 
-        this.velocity = 3;
+        this.velocity = 2  ;
 
-        this.acc = -0.25;
+        this.acc = -0.125;
 
-        this.initVelocity = 3;
+        this.initVelocity = 2;
 
         this.rotation = 0;
 

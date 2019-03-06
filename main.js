@@ -26,11 +26,11 @@ $(document).keypress((event) => {
     playerJumpStatus = true;
   }
 
-  if (event.which === 100) {
+  if (event.which === 100 && playerLeftStatus === false) {
     playerRightStatus = true;
   }
 
-  if (event.which === 97) {
+  if (event.which === 97 && playerRightStatus === false) {
     playerLeftStatus = true;
   }
 

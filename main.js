@@ -23,6 +23,8 @@ var initpos = 0;
 
 var co;
 
+var DuckObstacles;
+
 var coin_arr;
 var StopObstacles;
 
@@ -89,6 +91,7 @@ function main() {
   r2 = new rails(gl, [7.5, -2, 0]);
   w = new walls(gl, [0, -2, 3800]);
   p = new player(gl, [-7, 0, 3995]);
+  DuckObstacles = [];
   StopObstacles = [];
 
   for (var i = 0; i < 10; i += 1) {
@@ -106,6 +109,23 @@ function main() {
     var obs = new StopObstacle(gl, [x, -2, getRndInteger(4000, 2000)], initShaderProgram);
     StopObstacles.push(obs);
   }
+
+  for (var i = 0; i < 5; i += 1) {
+
+    var x;
+
+    if (Math.round(Math.random() * 10) % 2 == 0) {
+      x = -7;
+    }
+
+    else {
+      x = 7;
+    }
+
+    var obs = new DuckObstacle(gl, [x, -2, getRndInteger(4000, 2000)], initShaderProgram);
+    DuckObstacles.push(obs);
+  }
+
   // If we don't have a GL context, give up now
 
   if (!gl) {
@@ -240,6 +260,7 @@ function drawScene(gl, programInfo, deltaTime) {
   r2.drawRail(gl, viewProjectionMatrix, programInfo);
   w.drawGround(gl, viewProjectionMatrix, programInfo, initShaderProgram);
   p.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
+  // DuckObstacles.drawObstacle1(gl, viewProjectionMatrix);
   // co.drawCoin(gl, viewProjectionMatrix, programInfo);
 
   coin_arr.forEach(element => {
@@ -252,6 +273,13 @@ function drawScene(gl, programInfo, deltaTime) {
       console.log("THUKA");
     }
     // console.log(element.pos)
+  });
+
+  DuckObstacles.forEach(element => {
+    element.drawObstacle1(gl, viewProjectionMatrix);
+    if (element.detectCollision(p)) {
+      console.log("<THUKA>TIMES</THUKA>");
+    }
   });
 
 }
@@ -375,14 +403,14 @@ tick_elements = (gl) => {
     });
   }
 
-  console.log(StopObstacles.length);
+  // console.log(p.pos[2]);
 
   while (StopObstacles.length < 10) {
     var x;
 
     if (Math.round(Math.random() * 10) % 2 == 0) {
       x = -7;
-    } 
+    }
     else {
       x = 7;
     }

@@ -173,7 +173,7 @@ function main() {
     then = now;
 
     drawScene(gl, programInfo, deltaTime);
-    tick_elements();
+    tick_elements(gl);
 
     requestAnimationFrame(render);
   }
@@ -248,7 +248,10 @@ function drawScene(gl, programInfo, deltaTime) {
 
   StopObstacles.forEach(element => {
     element.drawObstacle(gl, viewProjectionMatrix, initShaderProgram);
-    console.log(element.pos);
+    if (element.detectCollision(p)) {
+      console.log("THUKA");
+    }
+    // console.log(element.pos)
   });
 
 }
@@ -304,7 +307,7 @@ function loadShader(gl, type, source) {
 }
 
 
-tick_elements = () => {
+tick_elements = (gl) => {
   // r1.pos[2] += 0.1;
   // r2.pos[2] += 0.1;
   p.pos[2] -= 0.5;
@@ -314,7 +317,7 @@ tick_elements = () => {
   // console.log(p.velocity);
 
   if ((p.velocity) == 0) {
-    console.log(p.pos, p.velocity);
+    // console.log(p.pos, p.velocity);
   }
 
   // console.log(p.pos);
@@ -326,7 +329,7 @@ tick_elements = () => {
   if (p.pos[1] <= 0.25 && p.pos[1] >= -0.25 && playerJumpStatus === true) {
     playerJumpStatus = false
     jumpfinalpos = initpos;
-    console.log(Math.round(jumpfinalpos - jumpinitpos));
+    // console.log(Math.round(jumpfinalpos - jumpinitpos));
   }
 
   if (p.pos[0] <= 7.25 && p.pos[0] >= 6.75 && playerRightStatus === true) {
@@ -354,5 +357,39 @@ tick_elements = () => {
       return value != toBeDeleted;
     });
   }
+
+  toBeDeleted = undefined;
+
+  for (let i = 0; i < StopObstacles.length; i += 1) {
+    const element = StopObstacles[i];
+
+    if (element.pos[2] > p.pos[2]) {
+      toBeDeleted = element;
+    }
+
+  }
+
+  if (toBeDeleted != undefined) {
+    StopObstacles = StopObstacles.filter(function (value, index, arr) {
+      return value != toBeDeleted;
+    });
+  }
+
+  console.log(StopObstacles.length);
+
+  while (StopObstacles.length < 10) {
+    var x;
+
+    if (Math.round(Math.random() * 10) % 2 == 0) {
+      x = -7;
+    } 
+    else {
+      x = 7;
+    }
+
+    var obs = new StopObstacle(gl, [x, -2, getRndInteger(p.pos[2] - 100, p.pos[2] - 4000)], initShaderProgram);
+    StopObstacles.push(obs);
+  }
+
 
 }

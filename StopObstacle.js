@@ -210,6 +210,28 @@ let StopObstacle = class {
   }
 
   detectCollision(p) {
-    
+    var flag = false;
+    var flag1 = false;
+
+    if (p.pos[0] != this.pos[0]) {
+      return false;
+    }
+
+    else {
+      if ((p.pos[2] + 1 - this.pos[2]) * (p.pos[2] - 1 - this.pos[2]) < 0) {
+        flag = true;
+      }
+
+      if ((p.pos[1] - 1) < this.pos[1] + 6) {
+        flag1 = true;
+      }
+
+      if (flag === true && flag1 === true) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
   }
 };

@@ -18,6 +18,7 @@ var r2;
 var w;
 var p;
 var pol;
+var FlyingBoostList;
 var score = 0;
 
 var speed = 0.5;
@@ -29,6 +30,8 @@ var initpos = 0;
 var co;
 
 var DuckObstacles;
+var vsSourceText;
+var fsSourceText;
 
 var coin_arr;
 var StopObstacles;
@@ -37,6 +40,9 @@ var playerJumpStatus = false;
 var playerRightStatus = false;
 var playerLeftStatus = false;
 var playerDuck = false;
+var FlyBoostStatus = false;
+
+var FlyBoostAttainPos;
 
 var jumpinitpos = 0;
 var jumpfinalpos = 0;
@@ -45,7 +51,7 @@ $(document).keypress((event) => {
   //console.log(event.which);
 
   // if (String.fromCharCode(event.which))
-  if (event.which === 32 && playerJumpStatus === false) {
+  if (event.which === 32 && playerJumpStatus === false && FlyBoostStatus === false) {
     playerJumpStatus = true;
     jumpinitpos = initpos;
   }
@@ -81,7 +87,47 @@ function main() {
   const canvas = document.querySelector('#glcanvas');
   const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
 
+  vsSourceText = `
+      attribute vec4 aVertexPosition;
+      attribute vec2 aTextureCoord;
+      uniform mat4 uModelViewMatrix;
+      uniform mat4 uProjectionMatrix;
+      varying highp vec2 vTextureCoord;
+      void main(void) {
+        gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+        vTextureCoord = aTextureCoord;
+      }
+  `;
+
+  fsSourceText = `
+      varying highp vec2 vTextureCoord;
+
+      uniform sampler2D uSampler;
+
+      void main(void) {
+          gl_FragColor = texture2D(uSampler, vTextureCoord);
+      }
+  `;
+
   coin_arr = [];
+  FlyingBoostList = [];
+  FlyBoostAttainPos = undefined;
+  for (var i = 0; i < 10; i++) {
+
+    var x;
+
+    if (Math.round(Math.random() * 10) % 2 == 0) {
+      x = -7;
+    }
+
+    else {
+      x = 7;
+    }
+
+    var f = new FlyingBoost(gl, [x, 0, 4000 - i * 1000], vsSourceText, fsSourceText, initShaderProgram);
+    FlyingBoostList.push(f);
+    console.log(f.pos);
+  }
 
   for (var i = 0; i < 500; i += 1) {
 
@@ -254,7 +300,7 @@ function drawScene(gl, programInfo, deltaTime) {
   // Set the drawing position to the "identity" point, which is
   // the center of the scene.
   var cameraMatrix = mat4.create();
-  mat4.translate(cameraMatrix, cameraMatrix, [0, 10, p.pos[2] + 50]);
+  mat4.translate(cameraMatrix, cameraMatrix, [0, p.pos[1] + 10, p.pos[2] + 50]);
 
   var cameraPosition = [
     cameraMatrix[12],
@@ -264,7 +310,7 @@ function drawScene(gl, programInfo, deltaTime) {
 
   var up = [0, 1, 0];
 
-  mat4.lookAt(cameraMatrix, cameraPosition, [0, 0, p.pos[2] - 250], up);
+  mat4.lookAt(cameraMatrix, cameraPosition, [0, p.pos[1], p.pos[2] - 250], up);
 
   var viewMatrix = cameraMatrix;
 
@@ -303,6 +349,17 @@ function drawScene(gl, programInfo, deltaTime) {
     }
   });
 
+  FlyingBoostList.forEach(element => {
+      element.drawBoost(gl, viewProjectionMatrix);
+      if (element.detectCollision(p)) {
+        console.log("COLLECTED");
+        if (FlyBoostStatus === false) {
+          FlyBoostAttainPos = p.pos[2];
+        }
+
+        FlyBoostStatus = true;
+      }
+  });
 }
 
 //
@@ -364,7 +421,16 @@ tick_elements = (gl) => {
   ScoreRender();
   initpos += 0.1;
 
-  p.tick(playerJumpStatus, playerRightStatus, playerLeftStatus);
+  p.tick(playerJumpStatus, playerRightStatus, playerLeftStatus, FlyBoostStatus);
+
+  console.log(FlyBoostAttainPos, p.pos, FlyBoostStatus, playerJumpStatus);
+  if (FlyBoostAttainPos != undefined) {
+    if (FlyBoostAttainPos - p.pos[2] >= 500) {
+      FlyBoostStatus = false;
+      FlyBoostAttainPos = undefined;
+    }
+
+  }
 
   pol.tick(playerRightStatus, playerLeftStatus);
 

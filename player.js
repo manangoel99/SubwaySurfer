@@ -189,14 +189,24 @@ let player = class {
 
     }
 
-    tick = (playerJumpStatus, playerRightStatus, playerLeftStatus) => {
-      if (playerJumpStatus === true) {
+    tick = (playerJumpStatus, playerRightStatus, playerLeftStatus, playerFlyStatus) => {
+      if (playerJumpStatus === true && playerFlyStatus === false) {
         this.pos[1] += this.velocity;
         this.velocity += this.acc;
       }
 
-      if (playerJumpStatus === false) {
+      if (playerJumpStatus === false && playerFlyStatus === false) {
         this.velocity = this.initVelocity;
+      }
+
+      if (playerFlyStatus === true) {
+        if (this.pos[1] < 25) {
+          this.pos[1] += 0.5;
+        }
+      }
+
+      if (playerJumpStatus === false && playerFlyStatus === false && this.pos[1] > 0) {
+        this.pos[1] -= 1;
       }
 
       if (playerRightStatus === true) {

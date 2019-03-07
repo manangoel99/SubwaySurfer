@@ -5,22 +5,24 @@ let player = class {
         this.positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
 
+        this.height = 2;
+
         this.positions = [
              // Front face
              -1.0, -1.0, 1.0,
              1.0, -1.0, 1.0,
-             1.0, 2.0, 1.0,
-             -1.0, 2.0, 1.0,
+             1.0, this.height, 1.0,
+             -1.0, this.height, 1.0,
              //Back Face
              -1.0, -1.0, -1.0,
              1.0, -1.0, -1.0,
-             1.0, 2.0, -1.0,
-             -1.0, 2.0, -1.0,
+             1.0, this.height, -1.0,
+             -1.0, this.height, -1.0,
              //Top Face
-             -1.0, 2.0, -1.0,
-             1.0, 2.0, -1.0,
-             1.0, 2.0, 1.0,
-             -1.0, 2.0, 1.0,
+             -1.0, this.height, -1.0,
+             1.0, this.height, -1.0,
+             1.0, this.height, 1.0,
+             -1.0, this.height, 1.0,
              //Bottom Face
              -1.0, -1.0, -1.0,
              1.0, -1.0, -1.0,
@@ -28,13 +30,13 @@ let player = class {
              -1.0, -1.0, 1.0,
              //Left Face
              -1.0, -1.0, -1.0,
-             -1.0, 2.0, -1.0,
-             -1.0, 2.0, 1.0,
+             -1.0, this.height, -1.0,
+             -1.0, this.height, 1.0,
              -1.0, -1.0, 1.0,
              //Right Face
              1.0, -1.0, -1.0,
-             1.0, 2.0, -1.0,
-             1.0, 2.0, 1.0,
+             1.0, this.height, -1.0,
+             1.0, this.height, 1.0,
              1.0, -1.0, 1.0,
         ];
 
@@ -71,15 +73,15 @@ let player = class {
             colors = colors.concat(c, c, c, c);
         }
 
-        const colorBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+        this.colorBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
         // Build the element array buffer; this specifies the indices
         // into the vertex arrays for each face's vertices.
 
-        const indexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+        this.indexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
 
         // This array defines each face as two triangles, using the
         // indices into the vertex array to specify each triangle's
@@ -101,8 +103,8 @@ let player = class {
 
         this.buffer = {
             position: this.positionBuffer,
-            color: colorBuffer,
-            indices: indexBuffer,
+            color: this.colorBuffer,
+            indices: this.indexBuffer,
         }
 
     }
@@ -204,5 +206,105 @@ let player = class {
       if (playerLeftStatus === true) {
         this.pos[0] -= 0.5;
       }
+    };
+
+    duck = (gl, playerDuck) => {
+      this.height = 1;
+
+      this.positionBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
+
+      // this.height = 2;
+
+      this.positions = [
+           // Front face
+           -1.0, -1.0, 1.0,
+           1.0, -1.0, 1.0,
+           1.0, this.height, 1.0,
+           -1.0, this.height, 1.0,
+           //Back Face
+           -1.0, -1.0, -1.0,
+           1.0, -1.0, -1.0,
+           1.0, this.height, -1.0,
+           -1.0, this.height, -1.0,
+           //Top Face
+           -1.0, this.height, -1.0,
+           1.0, this.height, -1.0,
+           1.0, this.height, 1.0,
+           -1.0, this.height, 1.0,
+           //Bottom Face
+           -1.0, -1.0, -1.0,
+           1.0, -1.0, -1.0,
+           1.0, -1.0, 1.0,
+           -1.0, -1.0, 1.0,
+           //Left Face
+           -1.0, -1.0, -1.0,
+           -1.0, this.height, -1.0,
+           -1.0, this.height, 1.0,
+           -1.0, -1.0, 1.0,
+           //Right Face
+           1.0, -1.0, -1.0,
+           1.0, this.height, -1.0,
+           1.0, this.height, 1.0,
+           1.0, -1.0, 1.0,
+      ];
+
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.positions), gl.STATIC_DRAW);
+
+      this.buffer = {
+        position: this.positionBuffer,
+        color: this.colorBuffer,
+        indices: this.indexBuffer,
+      };
+    };
+
+    unduck = (gl) => {
+      this.height = 2;
+
+      this.positionBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
+
+      // this.height = 2;
+
+      this.positions = [
+           // Front face
+           -1.0, -1.0, 1.0,
+           1.0, -1.0, 1.0,
+           1.0, this.height, 1.0,
+           -1.0, this.height, 1.0,
+           //Back Face
+           -1.0, -1.0, -1.0,
+           1.0, -1.0, -1.0,
+           1.0, this.height, -1.0,
+           -1.0, this.height, -1.0,
+           //Top Face
+           -1.0, this.height, -1.0,
+           1.0, this.height, -1.0,
+           1.0, this.height, 1.0,
+           -1.0, this.height, 1.0,
+           //Bottom Face
+           -1.0, -1.0, -1.0,
+           1.0, -1.0, -1.0,
+           1.0, -1.0, 1.0,
+           -1.0, -1.0, 1.0,
+           //Left Face
+           -1.0, -1.0, -1.0,
+           -1.0, this.height, -1.0,
+           -1.0, this.height, 1.0,
+           -1.0, -1.0, 1.0,
+           //Right Face
+           1.0, -1.0, -1.0,
+           1.0, this.height, -1.0,
+           1.0, this.height, 1.0,
+           1.0, -1.0, 1.0,
+      ];
+
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.positions), gl.STATIC_DRAW);
+
+      this.buffer = {
+        position: this.positionBuffer,
+        color: this.colorBuffer,
+        indices: this.indexBuffer,
+      };
     };
 };

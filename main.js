@@ -19,6 +19,10 @@ var w;
 var p;
 var score = 0;
 
+var speed = 0.25;
+
+var acc = 0.00625;
+
 var initpos = 0;
 
 var co;
@@ -31,6 +35,7 @@ var StopObstacles;
 var playerJumpStatus = false;
 var playerRightStatus = false;
 var playerLeftStatus = false;
+var playerDuck = false;
 
 var jumpinitpos = 0;
 var jumpfinalpos = 0;
@@ -52,7 +57,17 @@ $(document).keypress((event) => {
     playerLeftStatus = true;
   }
 
+  if (event.which === 115) {
+    playerDuck = true;
+  }
+  // console.log("HO", event.which);
+});
+
+$(document).keyup((event) => {
   // console.log(event.which);
+  if (event.which === 83) {
+    playerDuck = false;
+  }
 });
 
 function ScoreRender() {
@@ -247,7 +262,7 @@ function drawScene(gl, programInfo, deltaTime) {
 
   var up = [0, 1, 0];
 
-  mat4.lookAt(cameraMatrix, cameraPosition, [0, 0, -250], up);
+  mat4.lookAt(cameraMatrix, cameraPosition, [0, 0, p.pos[2] - 250], up);
 
   var viewMatrix = cameraMatrix;
 
@@ -277,7 +292,7 @@ function drawScene(gl, programInfo, deltaTime) {
 
   DuckObstacles.forEach(element => {
     element.drawObstacle1(gl, viewProjectionMatrix);
-    if (element.detectCollision(p)) {
+    if (element.detectCollision(p, playerDuck)) {
       console.log("<THUKA>TIMES</THUKA>");
     }
   });
@@ -336,28 +351,18 @@ function loadShader(gl, type, source) {
 
 
 tick_elements = (gl) => {
-  // r1.pos[2] += 0.1;
-  // r2.pos[2] += 0.1;
-  p.pos[2] -= 0.5;
+  p.pos[2] -= speed;
+  if (speed < 1) {
+    speed += acc;
+  }
   ScoreRender();
   initpos += 0.1;
-
-  // console.log(p.velocity);
-
-  if ((p.velocity) == 0) {
-    // console.log(p.pos, p.velocity);
-  }
-
-  // console.log(p.pos);
-
-  // console.log(initpos);
 
   p.tick(playerJumpStatus, playerRightStatus, playerLeftStatus);
 
   if (p.pos[1] <= 0.25 && p.pos[1] >= -0.25 && playerJumpStatus === true) {
     playerJumpStatus = false
     jumpfinalpos = initpos;
-    // console.log(Math.round(jumpfinalpos - jumpinitpos));
   }
 
   if (p.pos[0] <= 7.25 && p.pos[0] >= 6.75 && playerRightStatus === true) {
@@ -403,7 +408,22 @@ tick_elements = (gl) => {
     });
   }
 
-  // console.log(p.pos[2]);
+  toBeDeleted = undefined;
+
+  for (let i = 0; i < DuckObstacles.length; i += 1) {
+    const element = StopObstacles[i];
+
+    if (element.pos[2] > p.pos[2]) {
+      toBeDeleted = element;
+    }
+
+  }
+
+  if (toBeDeleted != undefined) {
+    StopObstacles = StopObstacles.filter(function (value, index, arr) {
+      return value != toBeDeleted;
+    });
+  }
 
   while (StopObstacles.length < 10) {
     var x;
@@ -419,5 +439,26 @@ tick_elements = (gl) => {
     StopObstacles.push(obs);
   }
 
+  while (DuckObstacles.length < 5) {
+    var x;
+
+    if (Math.round(Math.random() * 10) % 2 == 0) {
+      x = -7;
+    }
+    else {
+      x = 7;
+    }
+
+    var obs = new DuckObstacles(gl, [x, -2, getRndInteger(p.pos[2] - 100, p.pos[2] - 1000)], initShaderProgram);
+    DuckObstacles.push(obs);
+  }
+
+  if (playerDuck === true) {
+    p.duck(gl, playerDuck);
+  }
+
+  if (playerDuck === false) {
+    p.unduck(gl);
+  }
 
 }

@@ -209,7 +209,7 @@ let DuckObstacle = class {
     }
   }
 
-  detectCollision(p) {
+  detectCollision(p, playerDuck) {
     var flag = false;
     var flag1 = false;
 
@@ -222,7 +222,7 @@ let DuckObstacle = class {
         flag = true;
       }
 
-      if ((p.pos[1] - 1) > this.pos[1] + 6) {
+      if (playerDuck === false) {
         flag1 = true;
       }
 

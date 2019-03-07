@@ -333,7 +333,7 @@ function drawScene(gl, programInfo, deltaTime) {
 
   StopObstacles.forEach(element => {
     element.drawObstacle(gl, viewProjectionMatrix, initShaderProgram);
-    if (element.detectCollision(p)) {
+    if (element.detectCollision(p) && playerFlyStatus === false) {
       console.log("THUKA");
     }
     // console.log(element.pos)
@@ -341,7 +341,7 @@ function drawScene(gl, programInfo, deltaTime) {
 
   DuckObstacles.forEach(element => {
     element.drawObstacle1(gl, viewProjectionMatrix);
-    if (element.detectCollision(p, playerDuck)) {
+    if (element.detectCollision(p, playerDuck) && playerFlyStatus === false) {
       if (speed >= 0.25)
         speed -= 0.2;
         console.log(speed);

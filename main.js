@@ -17,9 +17,10 @@ var r1;
 var r2;
 var w;
 var p;
+var pol;
 var score = 0;
 
-var speed = 0.25;
+var speed = 0.5;
 
 var acc = 0.00625;
 
@@ -105,7 +106,8 @@ function main() {
   r1 = new rails(gl, [-7.5, -2, 0]);
   r2 = new rails(gl, [7.5, -2, 0]);
   w = new walls(gl, [0, -2, 3800]);
-  p = new player(gl, [-7, 0, 3995]);
+  p = new player(gl, [-7, 0, 3970]);
+  pol = new police(gl, [-7, 0, 4000]);
   DuckObstacles = [];
   StopObstacles = [];
 
@@ -252,7 +254,7 @@ function drawScene(gl, programInfo, deltaTime) {
   // Set the drawing position to the "identity" point, which is
   // the center of the scene.
   var cameraMatrix = mat4.create();
-  mat4.translate(cameraMatrix, cameraMatrix, [0, 10, p.pos[2] + 30]);
+  mat4.translate(cameraMatrix, cameraMatrix, [0, 10, p.pos[2] + 50]);
 
   var cameraPosition = [
     cameraMatrix[12],
@@ -275,6 +277,7 @@ function drawScene(gl, programInfo, deltaTime) {
   r2.drawRail(gl, viewProjectionMatrix, programInfo);
   w.drawGround(gl, viewProjectionMatrix, programInfo, initShaderProgram);
   p.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
+  pol.drawCube(gl, viewProjectionMatrix, programInfo);
   // DuckObstacles.drawObstacle1(gl, viewProjectionMatrix);
   // co.drawCoin(gl, viewProjectionMatrix, programInfo);
 
@@ -293,6 +296,9 @@ function drawScene(gl, programInfo, deltaTime) {
   DuckObstacles.forEach(element => {
     element.drawObstacle1(gl, viewProjectionMatrix);
     if (element.detectCollision(p, playerDuck)) {
+      if (speed >= 0.25)
+        speed -= 0.2;
+        console.log(speed);
       console.log("<THUKA>TIMES</THUKA>");
     }
   });
@@ -359,6 +365,16 @@ tick_elements = (gl) => {
   initpos += 0.1;
 
   p.tick(playerJumpStatus, playerRightStatus, playerLeftStatus);
+
+  pol.tick(playerRightStatus, playerLeftStatus);
+
+  if (pol.pos[2] - p.pos[2] > 15) {
+    pol.pos[2] = p.pos[2] + 15;
+  }
+
+  if (pol.detectCollision(p)) {
+    console.log("Pakda Gaya");
+  }
 
   if (p.pos[1] <= 0.25 && p.pos[1] >= -0.25 && playerJumpStatus === true) {
     playerJumpStatus = false

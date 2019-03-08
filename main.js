@@ -11,6 +11,8 @@ function getRndInteger(min, max) {
 //
 
 var vsSourceNorm, fsSourceNorm;
+var fsSourceWall;
+var shaderProgramWall;
 
 var c;
 var c1;
@@ -119,6 +121,8 @@ function main() {
       }
   `;
 
+  fsSourceWall = fsSourceText;
+
   coin_arr = [];
   FlyingBoostList = [];
   FlyBoostAttainPos = undefined;
@@ -152,6 +156,23 @@ function main() {
     }
 
     var coi = new coin(gl, [x, getRndInteger(7, 17), getRndInteger(4000, -8000)]);
+
+    coin_arr.push(coi);
+  }
+
+  for (var i = 0; i < 200; i += 1) {
+
+    var x;
+
+    if (Math.round(Math.random() * 10) % 2 == 0) {
+      x = -7;
+    }
+
+    else {
+      x = 7;
+    }
+
+    var coi = new coin(gl, [x, 0, getRndInteger(4000, -8000)]);
 
     coin_arr.push(coi);
   }
@@ -236,6 +257,7 @@ function main() {
   // for the vertices and so forth is established.
   shaderProgramNorm = initShaderProgram(gl, vsSourceNorm, fsSourceNorm);
   shaderProgramText = initShaderProgram(gl, vsSourceText, fsSourceText);
+  shaderProgramWall = initShaderProgram(gl, vsSourceText, fsSourceWall);
   // Collect all the info needed to use the shader program.
   // Look up which attributes our shader program is using
   // for aVertexPosition, aVevrtexColor and also
@@ -266,6 +288,8 @@ function main() {
     shaderProgramNorm = initShaderProgram(gl, vsSourceNorm, fsSourceNorm);
 
     shaderProgramText = initShaderProgram(gl, vsSourceText, fsSourceText);
+
+    shaderProgramWall = initShaderProgram(gl, vsSourceText, fsSourceWall);
 
     programInfo = {
       program: shaderProgramNorm,
@@ -344,7 +368,7 @@ function drawScene(gl, programInfo, deltaTime) {
   g.drawGround(gl, viewProjectionMatrix, shaderProgramText);
   r1.drawRail(gl, viewProjectionMatrix, shaderProgramText);
   r2.drawRail(gl, viewProjectionMatrix, shaderProgramText);
-  w.drawGround(gl, viewProjectionMatrix, shaderProgramText);
+  w.drawGround(gl, viewProjectionMatrix, shaderProgramWall);
   p.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
   pol.drawCube(gl, viewProjectionMatrix, programInfo);
   coin_arr.forEach(element => {
@@ -578,6 +602,8 @@ makeGreyScale = () => {
         }
     `;
 
+    fsSourceWall = fsSourceText;
+
     fsSourceNorm = `
       varying lowp vec4 vColor;
 
@@ -599,6 +625,8 @@ makeGreyScale = () => {
         }
     `;
 
+    fsSourceWall = fsSourceText;
+
     fsSourceNorm = `
       varying lowp vec4 vColor;
 
@@ -609,6 +637,31 @@ makeGreyScale = () => {
 
     GreyScale = false;
   }
-  console.log(fsSourceText, fsSourceNorm);
+  // console.log(fsSourceText, fsSourceNorm);
 
 }
+
+window.setInterval(function() {
+  if (GreyScale === false) {
+    fsSourceWall = `
+
+        varying highp vec2 vTextureCoord;
+
+        uniform sampler2D uSampler;
+
+        void main(void) {
+
+            gl_FragColor = vec4(texture2D(uSampler, vTextureCoord).r + 0.25, texture2D(uSampler, vTextureCoord).g + 0.25, texture2D(uSampler, vTextureCoord).b + 0.25, texture2D(uSampler, vTextureCoord).a);
+            //gl_FragColor = texture2D(uSampler, vTextureCoord).gba;
+
+        }
+
+    `;
+
+  }
+}, 5000);
+
+window.setInterval(function() {
+  if (GreyScale === false)
+    fsSourceWall = fsSourceText;
+}, 8000);

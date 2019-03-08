@@ -342,8 +342,8 @@ function drawScene(gl, programInfo, deltaTime) {
   mat4.multiply(viewProjectionMatrix, projectionMatrix, viewMatrix);
 
   g.drawGround(gl, viewProjectionMatrix, shaderProgramText);
-  r1.drawRail(gl, viewProjectionMatrix, programInfo);
-  r2.drawRail(gl, viewProjectionMatrix, programInfo);
+  r1.drawRail(gl, viewProjectionMatrix, shaderProgramText);
+  r2.drawRail(gl, viewProjectionMatrix, shaderProgramText);
   w.drawGround(gl, viewProjectionMatrix, shaderProgramText);
   p.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
   pol.drawCube(gl, viewProjectionMatrix, programInfo);

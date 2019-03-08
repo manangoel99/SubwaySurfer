@@ -219,6 +219,10 @@ let player = class {
       if (playerLeftStatus === true) {
         this.pos[0] -= 0.5;
       }
+
+      if (this.pos[1] < 0) {
+        this.pos[1] = 0;
+      }
     };
 
     duck = (gl, playerDuck) => {

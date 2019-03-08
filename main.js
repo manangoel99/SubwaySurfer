@@ -48,8 +48,10 @@ var playerRightStatus = false;
 var playerLeftStatus = false;
 var playerDuck = false;
 var FlyBoostStatus = false;
+var JumpBoostStatus = false;
 
 var FlyBoostAttainPos;
+var JumpBoostAttainPos;
 
 var jumpinitpos = 0;
 var jumpfinalpos = 0;
@@ -125,7 +127,9 @@ function main() {
 
   coin_arr = [];
   FlyingBoostList = [];
+  JumpBoostList = [];
   FlyBoostAttainPos = undefined;
+
   for (var i = 0; i < 10; i++) {
 
     var x;
@@ -140,6 +144,23 @@ function main() {
 
     var f = new FlyingBoost(gl, [x, 0, 4000 - i * 1000], vsSourceText, fsSourceText, initShaderProgram);
     FlyingBoostList.push(f);
+    console.log(f.pos);
+  }
+
+  for (var i = 0; i < 10; i++) {
+
+    var x;
+
+    if (Math.round(Math.random() * 10) % 2 == 0) {
+      x = -7;
+    }
+
+    else {
+      x = 7;
+    }
+
+    var f = new JumpBoost(gl, [x, 0, 4000 - i * 800]);
+    JumpBoostList.push(f);
     console.log(f.pos);
   }
 
@@ -403,6 +424,20 @@ function drawScene(gl, programInfo, deltaTime) {
         playerJumpStatus = false;
       }
   });
+
+  JumpBoostList.forEach(element => {
+    element.drawBoost(gl, viewProjectionMatrix, shaderProgramText);
+    if (element.detectCollision(p)) {
+      console.log("HHHHHHHH");
+      if (JumpBoostStatus === false) {
+        JumpBoostAttainPos = p.pos[2];
+      }
+
+      JumpBoostStatus = true;
+      p.velocity = 5;
+      p.initVelocity = 5;
+    }
+  });
 }
 
 //
@@ -474,6 +509,17 @@ tick_elements = (gl) => {
       FlyBoostAttainPos = undefined;
     }
 
+  }
+
+  console.log(p.pos[1]);
+
+  if (JumpBoostStatus != undefined) {
+    if (JumpBoostAttainPos - p.pos[2] >= 250) {
+      JumpBoostStatus = false;
+      JumpBoostAttainPos = undefined;
+      p.velocity = 2;
+      p.initVelocity = 2;
+    }
   }
 
   pol.tick(playerRightStatus, playerLeftStatus);

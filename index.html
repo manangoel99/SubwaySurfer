@@ -19,6 +19,8 @@
     </div>
     <div class="container">
       <center><button id="startGame" class="btn btn-success">Start</button></center>
+      <br>
+      <center><button id="GreyScale" class="btn btn-success">Grey Scale</button></center>
     </div>
   </body>
   <script src="./gl-matrix.js"></script>
@@ -38,5 +40,6 @@
       $("#ScoreDisplay").css("display", "block");
       main();
     });
+    $("#GreyScale").click(makeGreyScale);
   </script>
 </html>

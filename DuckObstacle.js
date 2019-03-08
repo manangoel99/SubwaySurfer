@@ -2,30 +2,6 @@ function isPowerOf2(value) {
     return (value & (value - 1)) == 0;
 }
 
-const vsSource1 = `
-    attribute vec4 aVertexPosition;
-    attribute vec2 aTextureCoord;
-    uniform mat4 uModelViewMatrix;
-    uniform mat4 uProjectionMatrix;
-    varying highp vec2 vTextureCoord;
-    void main(void) {
-      gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-      vTextureCoord = aTextureCoord;
-    }
-`;
-
-const fsSource1 = `
-    varying highp vec2 vTextureCoord;
-
-    uniform sampler2D uSampler;
-
-    void main(void) {
-        gl_FragColor = texture2D(uSampler, vTextureCoord);
-    }
-`;
-
-
-
 function getTexture(gl, url) {
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -68,7 +44,7 @@ function getTexture(gl, url) {
 }
 
 let DuckObstacle = class {
-  constructor(gl, pos, initShaderProgram) {
+  constructor(gl, pos) {
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
@@ -111,7 +87,21 @@ let DuckObstacle = class {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
         gl.STATIC_DRAW);
 
-    var shaderProgram = initShaderProgram(gl, vsSource1, fsSource1);
+    this.buffer = {
+      position: positionBuffer,
+      indices: indexBuffer,
+      textureCoord: textureCoordBuffer,
+    };
+  }
+
+  drawObstacle1(gl, projectionMatrix, shaderProgram) {
+    const modelViewMatrix = mat4.create();
+    mat4.translate(
+        modelViewMatrix,
+        modelViewMatrix,
+        this.pos
+    );
+
 
     this.programInfo1 = {
       program: shaderProgram,
@@ -126,22 +116,6 @@ let DuckObstacle = class {
       },
 
     };
-
-
-    this.buffer = {
-      position: positionBuffer,
-      indices: indexBuffer,
-      textureCoord: textureCoordBuffer,
-    };
-  }
-
-  drawObstacle1(gl, projectionMatrix, initShaderProgram) {
-    const modelViewMatrix = mat4.create();
-    mat4.translate(
-        modelViewMatrix,
-        modelViewMatrix,
-        this.pos
-    );
 
     {
         const numComponents = 3;

@@ -10,6 +10,8 @@ function getRndInteger(min, max) {
 // Start here
 //
 
+var vsSourceNorm, fsSourceNorm;
+
 var c;
 var c1;
 var g;
@@ -19,7 +21,9 @@ var w;
 var p;
 var pol;
 var FlyingBoostList;
+var JumpBoostList;
 var score = 0;
+var GreyScale = false;
 
 var speed = 0.5;
 
@@ -48,9 +52,10 @@ var FlyBoostAttainPos;
 var jumpinitpos = 0;
 var jumpfinalpos = 0;
 
+var shaderProgramNorm, shaderProgramText;
+
 $(document).keypress((event) => {
   //console.log(event.which);
-
   // if (String.fromCharCode(event.which))
   if (event.which === 32 && playerJumpStatus === false && FlyBoostStatus === false) {
     playerJumpStatus = true;
@@ -82,11 +87,15 @@ function ScoreRender() {
   $("#score").text(score);
 }
 
+
+
 function main() {
 
 
   const canvas = document.querySelector('#glcanvas');
   const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  // gl.enable(gl.BLEND);
 
   vsSourceText = `
       attribute vec4 aVertexPosition;
@@ -186,7 +195,7 @@ function main() {
       x = 7;
     }
 
-    var obs = new DuckObstacle(gl, [x, -2, getRndInteger(4000, 2000)], initShaderProgram);
+    var obs = new DuckObstacle(gl, [x, -2, getRndInteger(4000, 2000)]);
     DuckObstacles.push(obs);
   }
 
@@ -199,7 +208,7 @@ function main() {
 
   // Vertex shader program
 
-  const vsSource = `
+  vsSourceNorm = `
     attribute vec4 aVertexPosition;
     attribute vec4 aVertexColor;
 
@@ -216,31 +225,30 @@ function main() {
 
   // Fragment shader program
 
-  const fsSource = `
+  fsSourceNorm = `
     varying lowp vec4 vColor;
 
     void main(void) {
       gl_FragColor = vColor;
     }
   `;
-
   // Initialize a shader program; this is where all the lighting
   // for the vertices and so forth is established.
-  const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
-
+  shaderProgramNorm = initShaderProgram(gl, vsSourceNorm, fsSourceNorm);
+  shaderProgramText = initShaderProgram(gl, vsSourceText, fsSourceText);
   // Collect all the info needed to use the shader program.
   // Look up which attributes our shader program is using
   // for aVertexPosition, aVevrtexColor and also
   // look up uniform locations.
   programInfo = {
-    program: shaderProgram,
+    program: shaderProgramNorm,
     attribLocations: {
-      vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
-      vertexColor: gl.getAttribLocation(shaderProgram, 'aVertexColor'),
+      vertexPosition: gl.getAttribLocation(shaderProgramNorm, 'aVertexPosition'),
+      vertexColor: gl.getAttribLocation(shaderProgramNorm, 'aVertexColor'),
     },
     uniformLocations: {
-      projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
-      modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+      projectionMatrix: gl.getUniformLocation(shaderProgramNorm, 'uProjectionMatrix'),
+      modelViewMatrix: gl.getUniformLocation(shaderProgramNorm, 'uModelViewMatrix'),
     },
   };
 
@@ -255,7 +263,21 @@ function main() {
     now *= 0.001;  // convert to seconds
     const deltaTime = now - then;
     then = now;
+    shaderProgramNorm = initShaderProgram(gl, vsSourceNorm, fsSourceNorm);
 
+    shaderProgramText = initShaderProgram(gl, vsSourceText, fsSourceText);
+
+    programInfo = {
+      program: shaderProgramNorm,
+      attribLocations: {
+        vertexPosition: gl.getAttribLocation(shaderProgramNorm, 'aVertexPosition'),
+        vertexColor: gl.getAttribLocation(shaderProgramNorm, 'aVertexColor'),
+      },
+      uniformLocations: {
+        projectionMatrix: gl.getUniformLocation(shaderProgramNorm, 'uProjectionMatrix'),
+        modelViewMatrix: gl.getUniformLocation(shaderProgramNorm, 'uModelViewMatrix'),
+      },
+    };
     drawScene(gl, programInfo, deltaTime);
     tick_elements(gl);
 
@@ -319,19 +341,18 @@ function drawScene(gl, programInfo, deltaTime) {
 
   mat4.multiply(viewProjectionMatrix, projectionMatrix, viewMatrix);
 
-  g.drawGround(gl, viewProjectionMatrix, vsSourceText, fsSourceText, initShaderProgram);
+  g.drawGround(gl, viewProjectionMatrix, shaderProgramText);
   r1.drawRail(gl, viewProjectionMatrix, programInfo);
   r2.drawRail(gl, viewProjectionMatrix, programInfo);
-  w.drawGround(gl, viewProjectionMatrix, vsSourceText, fsSourceText, initShaderProgram);
+  w.drawGround(gl, viewProjectionMatrix, shaderProgramText);
   p.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
   pol.drawCube(gl, viewProjectionMatrix, programInfo);
-
   coin_arr.forEach(element => {
     element.drawCoin(gl, viewProjectionMatrix, programInfo);
   });
 
   StopObstacles.forEach(element => {
-    element.drawObstacle(gl, viewProjectionMatrix, vsSourceText, fsSourceText, initShaderProgram);
+    element.drawObstacle(gl, viewProjectionMatrix, shaderProgramText);
     if (element.detectCollision(p) && FlyBoostStatus === false) {
       console.log("THUKA");
     }
@@ -339,7 +360,7 @@ function drawScene(gl, programInfo, deltaTime) {
   });
 
   DuckObstacles.forEach(element => {
-    element.drawObstacle1(gl, viewProjectionMatrix);
+    element.drawObstacle1(gl, viewProjectionMatrix, shaderProgramText);
     if (element.detectCollision(p, playerDuck) && FlyBoostStatus === false) {
       if (speed >= 0.25)
         speed -= 0.2;
@@ -412,6 +433,7 @@ function loadShader(gl, type, source) {
 
 
 tick_elements = (gl) => {
+
   p.pos[2] -= speed;
   if (speed < 1) {
     speed += acc;
@@ -421,7 +443,7 @@ tick_elements = (gl) => {
 
   p.tick(playerJumpStatus, playerRightStatus, playerLeftStatus, FlyBoostStatus);
 
-  console.log(FlyBoostAttainPos, p.pos, FlyBoostStatus, playerJumpStatus);
+  // console.log(FlyBoostAttainPos, p.pos, FlyBoostStatus, playerJumpStatus);
   if (FlyBoostAttainPos != undefined) {
     if (FlyBoostAttainPos - p.pos[2] >= 500) {
       FlyBoostStatus = false;
@@ -529,7 +551,7 @@ tick_elements = (gl) => {
       x = 7;
     }
 
-    var obs = new DuckObstacles(gl, [x, -2, getRndInteger(p.pos[2] - 100, p.pos[2] - 1000)], initShaderProgram);
+    var obs = new DuckObstacles(gl, [x, -2, getRndInteger(p.pos[2] - 100, p.pos[2] - 1000)]);
     DuckObstacles.push(obs);
   }
 
@@ -540,5 +562,53 @@ tick_elements = (gl) => {
   if (playerDuck === false) {
     p.unduck(gl);
   }
+
+}
+
+
+makeGreyScale = () => {
+  if (GreyScale === false) {
+    fsSourceText = `
+        varying highp vec2 vTextureCoord;
+
+        uniform sampler2D uSampler;
+
+        void main(void) {
+            gl_FragColor = texture2D(uSampler, vTextureCoord).rrra;
+        }
+    `;
+
+    fsSourceNorm = `
+      varying lowp vec4 vColor;
+
+      void main(void) {
+        gl_FragColor = vColor.rrra;
+      }
+    `;
+
+    GreyScale = true;
+  }
+  else {
+    fsSourceText = `
+        varying highp vec2 vTextureCoord;
+
+        uniform sampler2D uSampler;
+
+        void main(void) {
+            gl_FragColor = texture2D(uSampler, vTextureCoord);
+        }
+    `;
+
+    fsSourceNorm = `
+      varying lowp vec4 vColor;
+
+      void main(void) {
+        gl_FragColor = vColor;
+      }
+    `;
+
+    GreyScale = false;
+  }
+  console.log(fsSourceText, fsSourceNorm);
 
 }

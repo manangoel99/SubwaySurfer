@@ -95,15 +95,13 @@ let StopObstacle = class {
     };
   }
 
-  drawObstacle(gl, projectionMatrix, vsSource, fsSource, initShaderProgram) {
+  drawObstacle(gl, projectionMatrix, shaderProgram) {
     const modelViewMatrix = mat4.create();
     mat4.translate(
         modelViewMatrix,
         modelViewMatrix,
         this.pos
     );
-
-    var shaderProgram = initShaderProgram(gl, vsSource, fsSource);
 
     this.programInfo1 = {
       program: shaderProgram,

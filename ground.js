@@ -121,7 +121,7 @@ let ground = class {
 
     }
 
-    drawGround(gl, projectionMatrix, vsSource, fsSource, initShaderProgram) {
+    drawGround(gl, projectionMatrix, shaderProgram) {
         const modelViewMatrix = mat4.create();
         mat4.translate(
             modelViewMatrix,
@@ -135,8 +135,6 @@ let ground = class {
             modelViewMatrix,
             this.rotation,
             [1, 1, 1]);
-
-        var shaderProgram = initShaderProgram(gl, vsSource, fsSource);
 
         const programInfo1 = {
             program: shaderProgram,

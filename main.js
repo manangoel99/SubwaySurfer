@@ -32,6 +32,7 @@ var co;
 var DuckObstacles;
 var vsSourceText;
 var fsSourceText;
+var programInfo;
 
 var coin_arr;
 var StopObstacles;
@@ -148,7 +149,7 @@ function main() {
 
   c = new cube(gl, [2, 5.0, -3.0]);
   c1 = new cube(gl, [2, -12, -8.0]);
-  g = new ground(gl, [0, -2, 0]);
+  g = new ground(gl, [0, -2, 0], fsSourceText, vsSourceText, initShaderProgram);
   r1 = new rails(gl, [-7.5, -2, 0]);
   r2 = new rails(gl, [7.5, -2, 0]);
   w = new walls(gl, [0, -2, 3800]);
@@ -231,7 +232,7 @@ function main() {
   // Look up which attributes our shader program is using
   // for aVertexPosition, aVevrtexColor and also
   // look up uniform locations.
-  const programInfo = {
+  programInfo = {
     program: shaderProgram,
     attribLocations: {
       vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
@@ -318,22 +319,20 @@ function drawScene(gl, programInfo, deltaTime) {
 
   mat4.multiply(viewProjectionMatrix, projectionMatrix, viewMatrix);
 
-  g.drawGround(gl, viewProjectionMatrix, programInfo, initShaderProgram);
+  g.drawGround(gl, viewProjectionMatrix, vsSourceText, fsSourceText, initShaderProgram);
   r1.drawRail(gl, viewProjectionMatrix, programInfo);
   r2.drawRail(gl, viewProjectionMatrix, programInfo);
-  w.drawGround(gl, viewProjectionMatrix, programInfo, initShaderProgram);
+  w.drawGround(gl, viewProjectionMatrix, vsSourceText, fsSourceText, initShaderProgram);
   p.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
   pol.drawCube(gl, viewProjectionMatrix, programInfo);
-  // DuckObstacles.drawObstacle1(gl, viewProjectionMatrix);
-  // co.drawCoin(gl, viewProjectionMatrix, programInfo);
 
   coin_arr.forEach(element => {
     element.drawCoin(gl, viewProjectionMatrix, programInfo);
   });
 
   StopObstacles.forEach(element => {
-    element.drawObstacle(gl, viewProjectionMatrix, initShaderProgram);
-    if (element.detectCollision(p) && playerFlyStatus === false) {
+    element.drawObstacle(gl, viewProjectionMatrix, vsSourceText, fsSourceText, initShaderProgram);
+    if (element.detectCollision(p) && FlyBoostStatus === false) {
       console.log("THUKA");
     }
     // console.log(element.pos)
@@ -341,11 +340,9 @@ function drawScene(gl, programInfo, deltaTime) {
 
   DuckObstacles.forEach(element => {
     element.drawObstacle1(gl, viewProjectionMatrix);
-    if (element.detectCollision(p, playerDuck) && playerFlyStatus === false) {
+    if (element.detectCollision(p, playerDuck) && FlyBoostStatus === false) {
       if (speed >= 0.25)
         speed -= 0.2;
-        console.log(speed);
-      console.log("<THUKA>TIMES</THUKA>");
     }
   });
 
@@ -358,6 +355,7 @@ function drawScene(gl, programInfo, deltaTime) {
         }
 
         FlyBoostStatus = true;
+        playerJumpStatus = false;
       }
   });
 }

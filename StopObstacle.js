@@ -2,29 +2,6 @@ function isPowerOf2(value) {
     return (value & (value - 1)) == 0;
 }
 
-const vsSource = `
-    attribute vec4 aVertexPosition;
-    attribute vec2 aTextureCoord;
-    uniform mat4 uModelViewMatrix;
-    uniform mat4 uProjectionMatrix;
-    varying highp vec2 vTextureCoord;
-    void main(void) {
-      gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-      vTextureCoord = aTextureCoord;
-    }
-`;
-
-const fsSource = `
-    varying highp vec2 vTextureCoord;
-
-    uniform sampler2D uSampler;
-
-    void main(void) {
-        gl_FragColor = texture2D(uSampler, vTextureCoord);
-    }
-`;
-
-
 
 function getTexture(gl, url) {
     const texture = gl.createTexture();
@@ -111,6 +88,21 @@ let StopObstacle = class {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
         gl.STATIC_DRAW);
 
+    this.buffer = {
+      position: positionBuffer,
+      indices: indexBuffer,
+      textureCoord: textureCoordBuffer,
+    };
+  }
+
+  drawObstacle(gl, projectionMatrix, vsSource, fsSource, initShaderProgram) {
+    const modelViewMatrix = mat4.create();
+    mat4.translate(
+        modelViewMatrix,
+        modelViewMatrix,
+        this.pos
+    );
+
     var shaderProgram = initShaderProgram(gl, vsSource, fsSource);
 
     this.programInfo1 = {
@@ -126,22 +118,6 @@ let StopObstacle = class {
       },
 
     };
-
-
-    this.buffer = {
-      position: positionBuffer,
-      indices: indexBuffer,
-      textureCoord: textureCoordBuffer,
-    };
-  }
-
-  drawObstacle(gl, projectionMatrix, initShaderProgram) {
-    const modelViewMatrix = mat4.create();
-    mat4.translate(
-        modelViewMatrix,
-        modelViewMatrix,
-        this.pos
-    );
 
     {
         const numComponents = 3;

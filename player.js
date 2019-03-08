@@ -203,6 +203,9 @@ let player = class {
         if (this.pos[1] < 25) {
           this.pos[1] += 0.5;
         }
+        if (this.pos[1] > 25) {
+          this.pos[1] = 25;
+        }
       }
 
       if (playerJumpStatus === false && playerFlyStatus === false && this.pos[1] > 0) {

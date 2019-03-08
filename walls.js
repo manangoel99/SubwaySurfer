@@ -131,7 +131,7 @@ let walls = class {
 
     }
 
-    drawGround(gl, projectionMatrix, programInfo, initShaderProgram) {
+    drawGround(gl, projectionMatrix, vsSource, fsSource, initShaderProgram) {
         const modelViewMatrix = mat4.create();
         mat4.translate(
             modelViewMatrix,
@@ -145,30 +145,6 @@ let walls = class {
             modelViewMatrix,
             this.rotation,
             [1, 1, 1]);
-
-
-        const vsSource = `
-            attribute vec4 aVertexPosition;
-            attribute vec2 aTextureCoord;
-            uniform mat4 uModelViewMatrix;
-            uniform mat4 uProjectionMatrix;
-            varying highp vec2 vTextureCoord;
-            void main(void) {
-              gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-              vTextureCoord = aTextureCoord;
-            }
-        `;
-
-        const fsSource = `
-            varying highp vec2 vTextureCoord;
-
-            uniform sampler2D uSampler;
-
-            void main(void) {
-                gl_FragColor = texture2D(uSampler, vTextureCoord);
-            }
-        `;
-
         var shaderProgram = initShaderProgram(gl, vsSource, fsSource);
 
         const programInfo1 = {
@@ -192,14 +168,14 @@ let walls = class {
             const offset = 0;
             gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer.position);
             gl.vertexAttribPointer(
-                programInfo.attribLocations.vertexPosition,
+                programInfo1.attribLocations.vertexPosition,
                 numComponents,
                 type,
                 normalize,
                 stride,
                 offset);
             gl.enableVertexAttribArray(
-                programInfo.attribLocations.vertexPosition);
+                programInfo1.attribLocations.vertexPosition);
         }
 
         // Tell WebGL how to pull out the colors from the color buffer

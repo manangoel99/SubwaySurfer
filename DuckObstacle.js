@@ -48,7 +48,7 @@ let DuckObstacle = class {
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-    this.texture = getTexture(gl, "./DuckObstacle.jpg");
+    this.texture = getTexture(gl, "./DuckObstacle.png");
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
 
     this.positions = [

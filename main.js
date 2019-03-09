@@ -98,8 +98,8 @@ function main() {
 
   const canvas = document.querySelector('#glcanvas');
   const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-  // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-  // gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  gl.enable(gl.BLEND);
 
   vsSourceText = `
       attribute vec4 aVertexPosition;
@@ -164,7 +164,7 @@ function main() {
     console.log(f.pos);
   }
 
-  for (var i = 0; i < 500; i += 1) {
+  for (var i = 0; i < 50; i += 1) {
 
     var x;
 
@@ -181,7 +181,7 @@ function main() {
     coin_arr.push(coi);
   }
 
-  for (var i = 0; i < 200; i += 1) {
+  for (var i = 0; i < 100; i += 1) {
 
     var x;
 
@@ -393,7 +393,7 @@ function drawScene(gl, programInfo, deltaTime) {
   p.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
   pol.drawCube(gl, viewProjectionMatrix, programInfo);
   coin_arr.forEach(element => {
-    element.drawCoin(gl, viewProjectionMatrix, programInfo);
+    element.drawCoin(gl, viewProjectionMatrix, shaderProgramText);
   });
 
   StopObstacles.forEach(element => {

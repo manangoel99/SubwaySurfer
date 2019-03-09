@@ -68,7 +68,7 @@ let JumpBoost = class {
 
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 
-    this.texture = getTexture(gl, "./Super_Sneakers.png");
+    this.texture = getTexture(gl, "./SuperSneakers.png");
 
     const textureCoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);

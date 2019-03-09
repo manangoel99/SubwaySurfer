@@ -3,7 +3,7 @@ let FlyingBoost = class {
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-    this.texture = getTexture(gl, "./Jetpack.png");
+    this.texture = getTexture(gl, "./jetpack.png");
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
 
     this.positions = [

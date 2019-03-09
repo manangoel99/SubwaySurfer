@@ -4,8 +4,6 @@ function getRndInteger(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-// main();
-
 //
 // Start here
 //
@@ -59,8 +57,6 @@ var jumpfinalpos = 0;
 var shaderProgramNorm, shaderProgramText;
 
 $(document).keypress((event) => {
-  //console.log(event.which);
-  // if (String.fromCharCode(event.which))
   if (event.which === 32 && playerJumpStatus === false && FlyBoostStatus === false) {
     playerJumpStatus = true;
     jumpinitpos = initpos;
@@ -77,11 +73,9 @@ $(document).keypress((event) => {
   if (event.which === 115) {
     playerDuck = true;
   }
-  // console.log("HO", event.which);
 });
 
 $(document).keyup((event) => {
-  // console.log(event.which);
   if (event.which === 83) {
     playerDuck = false;
   }
@@ -89,6 +83,20 @@ $(document).keyup((event) => {
 
 function ScoreRender() {
   $("#score").text(score);
+}
+
+function getX() {
+  var x;
+
+  if (Math.round(Math.random() * 10) % 2 == 0) {
+    x = -7;
+  }
+
+  else {
+    x = 7;
+  }
+
+  return x;
 }
 
 
@@ -132,74 +140,30 @@ function main() {
 
   for (var i = 0; i < 10; i++) {
 
-    var x;
-
-    if (Math.round(Math.random() * 10) % 2 == 0) {
-      x = -7;
-    }
-
-    else {
-      x = 7;
-    }
-
-    var f = new FlyingBoost(gl, [x, 0, 4000 - i * 1000], vsSourceText, fsSourceText, initShaderProgram);
+    var f = new FlyingBoost(gl, [getX(), 0, 4000 - i * 1000], vsSourceText, fsSourceText, initShaderProgram);
     FlyingBoostList.push(f);
     console.log(f.pos);
   }
 
   for (var i = 0; i < 10; i++) {
 
-    var x;
-
-    if (Math.round(Math.random() * 10) % 2 == 0) {
-      x = -7;
-    }
-
-    else {
-      x = 7;
-    }
-
-    var f = new JumpBoost(gl, [x, 0, 4000 - i * 800]);
+    var f = new JumpBoost(gl, [getX(), 0, 4000 - i * 800]);
     JumpBoostList.push(f);
-    console.log(f.pos);
   }
 
   for (var i = 0; i < 50; i += 1) {
-
-    var x;
-
-    if (Math.round(Math.random() * 10) % 2 == 0) {
-      x = -7;
-    }
-
-    else {
-      x = 7;
-    }
-
-    var coi = new coin(gl, [x, getRndInteger(7, 17), getRndInteger(4000, -8000)]);
+    var coi = new coin(gl, [getX(), getRndInteger(7, 17), getRndInteger(4000, -8000)]);
 
     coin_arr.push(coi);
   }
 
   for (var i = 0; i < 100; i += 1) {
 
-    var x;
-
-    if (Math.round(Math.random() * 10) % 2 == 0) {
-      x = -7;
-    }
-
-    else {
-      x = 7;
-    }
-
-    var coi = new coin(gl, [x, 0, getRndInteger(4000, -8000)]);
+    var coi = new coin(gl, [getX(), 0, getRndInteger(4000, -8000)]);
 
     coin_arr.push(coi);
   }
 
-  c = new cube(gl, [2, 5.0, -3.0]);
-  c1 = new cube(gl, [2, -12, -8.0]);
   g = new ground(gl, [0, -2, 0], fsSourceText, vsSourceText, initShaderProgram);
   r1 = new rails(gl, [-7.5, -2, 0]);
   r2 = new rails(gl, [7.5, -2, 0]);
@@ -210,34 +174,13 @@ function main() {
   StopObstacles = [];
 
   for (var i = 0; i < 10; i += 1) {
-
-    var x;
-
-    if (Math.round(Math.random() * 10) % 2 == 0) {
-      x = -7;
-    }
-
-    else {
-      x = 7;
-    }
-
-    var obs = new StopObstacle(gl, [x, -2, getRndInteger(4000, 2000)], initShaderProgram);
+    var obs = new StopObstacle(gl, [getX(), -2, getRndInteger(4000, 2000)], initShaderProgram);
     StopObstacles.push(obs);
   }
 
   for (var i = 0; i < 5; i += 1) {
 
-    var x;
-
-    if (Math.round(Math.random() * 10) % 2 == 0) {
-      x = -7;
-    }
-
-    else {
-      x = 7;
-    }
-
-    var obs = new DuckObstacle(gl, [x, -2, getRndInteger(4000, 2000)]);
+    var obs = new DuckObstacle(gl, [getX(), -2, getRndInteger(4000, 2000)]);
     DuckObstacles.push(obs);
   }
 
@@ -511,8 +454,6 @@ tick_elements = (gl) => {
 
   }
 
-  console.log(p.pos[1]);
-
   if (JumpBoostStatus != undefined) {
     if (JumpBoostAttainPos - p.pos[2] >= 250) {
       JumpBoostStatus = false;
@@ -598,30 +539,13 @@ tick_elements = (gl) => {
   }
 
   while (StopObstacles.length < 10) {
-    var x;
-
-    if (Math.round(Math.random() * 10) % 2 == 0) {
-      x = -7;
-    }
-    else {
-      x = 7;
-    }
-
-    var obs = new StopObstacle(gl, [x, -2, getRndInteger(p.pos[2] - 100, p.pos[2] - 4000)], initShaderProgram);
+    var obs = new StopObstacle(gl, [getX(), -2, getRndInteger(p.pos[2] - 100, p.pos[2] - 4000)], initShaderProgram);
     StopObstacles.push(obs);
   }
 
   while (DuckObstacles.length < 5) {
-    var x;
 
-    if (Math.round(Math.random() * 10) % 2 == 0) {
-      x = -7;
-    }
-    else {
-      x = 7;
-    }
-
-    var obs = new DuckObstacles(gl, [x, -2, getRndInteger(p.pos[2] - 100, p.pos[2] - 1000)]);
+    var obs = new DuckObstacles(getX(), [x, -2, getRndInteger(p.pos[2] - 100, p.pos[2] - 1000)]);
     DuckObstacles.push(obs);
   }
 

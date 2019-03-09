@@ -62,24 +62,6 @@ let coin = class {
       2, 2, 0,
     ];
 
-    // var theta = 0;
-
-    // var n = 100;
-
-    // var radius = 1;
-    // this.radius = radius;
-
-    // var angle = (2 * Math.PI) / n;
-
-    // for (var i = 0; i < n ; i += 1) {
-      // Array.prototype.push.apply(this.positions, [0, 0, 0]);
-      // Array.prototype.push.apply(this.positions, [radius * Math.cos(theta), radius * Math.sin(theta), 0]);
-      // Array.prototype.push.apply(this.positions, [radius * Math.cos(theta + angle), radius * Math.sin(theta + angle), 0]);
-      // Array.prototype.push.apply(this.positions, [radius * Math.cos(theta + 2 * angle), radius * Math.sin(theta + 2 * angle), 0]);
-
-      // theta += angle;
-    // }
-
     this.rotation = 0;
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.positions),gl.STATIC_DRAW);
@@ -111,14 +93,6 @@ let coin = class {
       0, 1, 2,  1, 2, 3,
     ];
 
-    // var k = 0;
-
-    // for (var i = 0; i < n; i += 1) {
-      // Array.prototype.push.apply(indices, [k, k + 1, k + 2, k, k + 2, k + 3]);
-      // k += 4;
-    // }
-
-    // console.log(this.positions.length, indices.length);
 
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
       new Uint16Array(indices), gl.STATIC_DRAW);
@@ -247,25 +221,6 @@ let coin = class {
   detectCollision = (p) => {
     var flag1 = false,
         flag2 = false;
-
-    // var quant = (p.pos[0] - this.pos[0]) * (p.pos[0] - this.pos[0]);
-    // quant += (p.pos[1] - this.pos[1]) * (p.pos[1] - this.pos[1]);
-    // quant -= (this.radius * this.radius);
-
-    // if (quant <= 0) {
-      // flag1 = true;
-    // }
-
-    // if ((p.pos[2] + 1 - this.pos[2]) * (p.pos[2] - 1 - this.pos[2]) < 0) {
-      // flag2 = true;
-    // }
-
-    // if (flag1 === true && flag2 === true) {
-      // return true;
-    // }
-    // else {
-      // return false;
-    // }
     if ((p.pos[2] + 1 - this.pos[2]) * (p.pos[2] - 1 - this.pos[2]) < 0) {
       flag1 = true;
     }

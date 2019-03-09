@@ -57,6 +57,8 @@ function initialize() {
   jumpinitpos = 0;
   jumpfinalpos = 0;
 
+  MovingTrains = undefined;
+
   shaderProgramNorm = undefined, shaderProgramText = undefined;
 
 }
@@ -66,6 +68,7 @@ var fsSourceWall;
 var shaderProgramWall;
 var GameStatus = false;
 var pauseStatus = false;
+var MovingTrains = undefined;
 
 var c;
 var c1;
@@ -192,6 +195,7 @@ function main() {
   coin_arr = [];
   FlyingBoostList = [];
   JumpBoostList = [];
+  MovingTrains = [];
   FlyBoostAttainPos = undefined;
 
   for (var i = 0; i < 10; i++) {
@@ -238,6 +242,11 @@ function main() {
 
     var obs = new DuckObstacle(gl, [getX(), -2, getRndInteger(4000, 2000)]);
     DuckObstacles.push(obs);
+  }
+
+  for (var i = 0; i < 5; i += 1) {
+    var moveT = new MoveTrain(gl, [getX(), -2, getRndInteger(3000, 0)]);
+    MovingTrains.push(moveT);
   }
 
   // If we don't have a GL context, give up now
@@ -441,6 +450,13 @@ function drawScene(gl, programInfo, deltaTime) {
       p.initVelocity = 5;
     }
   });
+
+  MovingTrains.forEach(element => {
+    element.drawTurn(gl, viewProjectionMatrix, shaderProgramText);
+    if (element.detectCollision(p)) {
+      GameStatus = false;
+    }
+  });
 }
 
 //
@@ -617,6 +633,11 @@ tick_elements = (gl) => {
   if (playerDuck === false) {
     p.unduck(gl);
   }
+
+  MovingTrains.forEach(element => {
+    element.tick();
+    console.log(element.pos);
+  });
 
 }
 

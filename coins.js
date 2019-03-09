@@ -56,10 +56,10 @@ let coin = class {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
 
     this.positions = [
-      -2, -2, 0,
-      -2, 2, 0,
-      2, -2, 0,
-      2, 2, 0,
+      -1, -1, 0,
+      -1, 1, 0,
+      1, -1, 0,
+      1, 1, 0,
     ];
 
     this.rotation = 0;

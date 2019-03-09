@@ -18,9 +18,13 @@
       <center>Score : <span id="score"> </span></center>
     </div>
     <div class="container">
-      <center><button id="startGame" class="btn btn-success">Start</button></center>
+      <center>
+        <button id="startGame" class="btn btn-success">Start</button>
+        <button id="pauseGame" class="btn btn-danger">Pause</button>
+        <button id="resumeGame" class="btn btn-dark">Resume</button>
+      </center>
       <br>
-      <center><button id="GreyScale" class="btn btn-success">Grey Scale</button></center>
+      <center><button style="display:none;" id="GreyScale" class="btn btn-success">Grey Scale</button></center>
     </div>
   </body>
   <script src="./gl-matrix.js"></script>
@@ -39,6 +43,8 @@
   <script>
     $("#startGame").click(function() {
       $("#ScoreDisplay").css("display", "block");
+      $("#GreyScale").css("display", "block");
+      initialize();
       main();
     });
     $("#GreyScale").click(makeGreyScale);

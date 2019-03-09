@@ -8,9 +8,64 @@ function getRndInteger(min, max) {
 // Start here
 //
 
+
+function initialize() {
+  vsSourceNorm = undefined, fsSourceNorm = undefined;
+  fsSourceWall = undefined;
+  shaderProgramWall = undefined;
+  GameStatus = false;
+
+  c = undefined;
+  c1 = undefined;
+  g = undefined;
+  r1 = undefined;
+  r2 = undefined;
+  w = undefined;
+  p = undefined;
+  pol = undefined;
+  FlyingBoostList = undefined;
+  JumpBoostList = undefined;
+  score = 0;
+  GreyScale = false;
+
+  speed = 0.5;
+
+  acc = 0.00625;
+
+  initpos = 0;
+
+  co = undefined;
+
+  DuckObstacles = undefined;
+  vsSourceText = undefined;
+  fsSourceText = undefined;
+  programInfo = undefined;
+
+  coin_arr = undefined;
+  StopObstacles = undefined;
+
+  playerJumpStatus = false;
+  playerRightStatus = false;
+  playerLeftStatus = false;
+  playerDuck = false;
+  FlyBoostStatus = false;
+  JumpBoostStatus = false;
+
+  FlyBoostAttainPos = undefined;
+  JumpBoostAttainPos = undefined;
+
+  jumpinitpos = 0;
+  jumpfinalpos = 0;
+
+  shaderProgramNorm = undefined, shaderProgramText = undefined;
+
+}
+
 var vsSourceNorm, fsSourceNorm;
 var fsSourceWall;
 var shaderProgramWall;
+var GameStatus = false;
+var pauseStatus = false;
 
 var c;
 var c1;
@@ -108,6 +163,7 @@ function main() {
   const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   gl.enable(gl.BLEND);
+  GameStatus = true;
 
   vsSourceText = `
       attribute vec4 aVertexPosition;
@@ -266,9 +322,12 @@ function main() {
         modelViewMatrix: gl.getUniformLocation(shaderProgramNorm, 'uModelViewMatrix'),
       },
     };
-    drawScene(gl, programInfo, deltaTime);
-    tick_elements(gl);
-
+    if (GameStatus === true) {
+      drawScene(gl, programInfo, deltaTime);
+      if (pauseStatus === false) {
+        tick_elements(gl);
+      }
+    }
     requestAnimationFrame(render);
   }
   requestAnimationFrame(render);
@@ -342,7 +401,8 @@ function drawScene(gl, programInfo, deltaTime) {
   StopObstacles.forEach(element => {
     element.drawObstacle(gl, viewProjectionMatrix, shaderProgramText);
     if (element.detectCollision(p) && FlyBoostStatus === false) {
-      console.log("THUKA");
+      //console.log("THUKA");
+      GameStatus = false;
     }
     // console.log(element.pos)
   });
@@ -471,6 +531,7 @@ tick_elements = (gl) => {
 
   if (pol.detectCollision(p)) {
     console.log("Pakda Gaya");
+    GameStatus = false;
   }
 
   if (p.pos[1] <= 0.25 && p.pos[1] >= -0.25 && playerJumpStatus === true) {
@@ -635,3 +696,14 @@ window.setInterval(function() {
   if (GreyScale === false)
     fsSourceWall = fsSourceText;
 }, 8000);
+
+
+document.getElementById('pauseGame').addEventListener("click", function() {
+  pauseStatus = true;
+});
+
+document.getElementById('resumeGame').addEventListener("click", function() {
+
+  pauseStatus = false;
+
+});

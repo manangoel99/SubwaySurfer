@@ -1,5 +1,5 @@
 let FlyingBoost = class {
-  constructor(gl, pos, vsSource, fsSource, initShaderProgram) {
+  constructor(gl, pos) {
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
@@ -42,7 +42,24 @@ let FlyingBoost = class {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
         gl.STATIC_DRAW);
 
-    var shaderProgram = initShaderProgram(gl, vsSource, fsSource);
+    // var shaderProgram = initShaderProgram(gl, vsSource, fsSource);
+
+    this.buffer = {
+      position: positionBuffer,
+      indices: indexBuffer,
+      textureCoord: textureCoordBuffer,
+    };
+
+
+  }
+
+  drawBoost = (gl, projectionMatrix, shaderProgram) => {
+    const modelViewMatrix = mat4.create();
+    mat4.translate(
+        modelViewMatrix,
+        modelViewMatrix,
+        this.pos
+    );
 
     this.programInfo1 = {
       program: shaderProgram,
@@ -57,24 +74,6 @@ let FlyingBoost = class {
       },
 
     };
-
-
-    this.buffer = {
-      position: positionBuffer,
-      indices: indexBuffer,
-      textureCoord: textureCoordBuffer,
-    };
-
-
-  }
-
-  drawBoost = (gl, projectionMatrix) => {
-    const modelViewMatrix = mat4.create();
-    mat4.translate(
-        modelViewMatrix,
-        modelViewMatrix,
-        this.pos
-    );
 
     {
         const numComponents = 3;
@@ -143,7 +142,7 @@ let FlyingBoost = class {
   }
 
   detectCollision = (p) => {
-    if ((p.pos[2] + 1 - this.pos[2]) * (p.pos[2] - 1 - this.pos[2]) < 0 && p.pos[0] === this.pos[0]) {
+    if ((p.pos[2] + 1 - this.pos[2]) * (p.pos[2] - 1 - this.pos[2]) < 0 && p.pos[0] === this.pos[0] && (p.pos[1] - 1) < (this.pos[1] + 6)) {
       return true;
     }
     else {

@@ -140,7 +140,7 @@ function main() {
 
   for (var i = 0; i < 10; i++) {
 
-    var f = new FlyingBoost(gl, [getX(), 0, 4000 - i * 1000], vsSourceText, fsSourceText, initShaderProgram);
+    var f = new FlyingBoost(gl, [getX(), 0, 4000 - i * 1000]);
     FlyingBoostList.push(f);
     console.log(f.pos);
   }
@@ -356,7 +356,7 @@ function drawScene(gl, programInfo, deltaTime) {
   });
 
   FlyingBoostList.forEach(element => {
-      element.drawBoost(gl, viewProjectionMatrix);
+      element.drawBoost(gl, viewProjectionMatrix, shaderProgramText);
       if (element.detectCollision(p)) {
         console.log("COLLECTED");
         if (FlyBoostStatus === false) {

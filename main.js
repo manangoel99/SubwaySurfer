@@ -25,6 +25,7 @@ function initialize() {
   pol = undefined;
   FlyingBoostList = undefined;
   JumpBoostList = undefined;
+  CoinBoostList = undefined;
   score = 0;
   GreyScale = false;
 
@@ -56,6 +57,9 @@ function initialize() {
 
   jumpinitpos = 0;
   jumpfinalpos = 0;
+  ScoreMultiplier = false;
+
+  CoinBoostAttainPos = undefined;
 
   MovingTrains = undefined;
 
@@ -80,6 +84,7 @@ var p;
 var pol;
 var FlyingBoostList;
 var JumpBoostList;
+var CoinBoostList;
 var score = 0;
 var GreyScale = false;
 
@@ -105,9 +110,11 @@ var playerLeftStatus = false;
 var playerDuck = false;
 var FlyBoostStatus = false;
 var JumpBoostStatus = false;
+var ScoreMultiplier = false;
 
 var FlyBoostAttainPos;
 var JumpBoostAttainPos;
+var CoinBoostAttainPos;
 
 var jumpinitpos = 0;
 var jumpfinalpos = 0;
@@ -196,7 +203,11 @@ function main() {
   FlyingBoostList = [];
   JumpBoostList = [];
   MovingTrains = [];
+  CoinBoostList = [];
   FlyBoostAttainPos = undefined;
+
+  var coinb = new CoinBoost(gl, [-7, 0, 3600]);
+  CoinBoostList.push(coinb);
 
   for (var i = 0; i < 10; i++) {
 
@@ -457,6 +468,14 @@ function drawScene(gl, programInfo, deltaTime) {
       GameStatus = false;
     }
   });
+
+  CoinBoostList.forEach(element => {
+    element.drawBoost(gl, viewProjectionMatrix, shaderProgramText);
+    if (element.detectCollision(p)) {
+      ScoreMultiplier = true;
+      CoinBoostAttainPos = p.pos[2];
+    }
+  })
 }
 
 //
@@ -530,6 +549,13 @@ tick_elements = (gl) => {
 
   }
 
+  if (CoinBoostAttainPos != undefined) {
+    if (CoinBoostAttainPos - p.pos[2] >= 200) {
+      ScoreMultiplier = false;
+      CoinBoostAttainPos = undefined;
+    }
+  }
+
   if (JumpBoostStatus != undefined) {
     if (JumpBoostAttainPos - p.pos[2] >= 250) {
       JumpBoostStatus = false;
@@ -570,7 +596,11 @@ tick_elements = (gl) => {
 
     if (element.detectCollision(p) === true) {
       toBeDeleted = element;
-      score += 1;
+      if (ScoreMultiplier === false)
+        score += 1;
+      else {
+        score += 2;
+      }
     }
 
   }

@@ -206,14 +206,16 @@ function main() {
   CoinBoostList = [];
   FlyBoostAttainPos = undefined;
 
-  var coinb = new CoinBoost(gl, [-7, 0, 3600]);
-  CoinBoostList.push(coinb);
+  for (var i = 0; i < 10; i++) {
+
+    var f = new CoinBoost(gl, [getX(), 0, 4000 - i * 641]);
+    CoinBoostList.push(f);
+  }
 
   for (var i = 0; i < 10; i++) {
 
     var f = new FlyingBoost(gl, [getX(), 0, 4000 - i * 1000]);
     FlyingBoostList.push(f);
-    console.log(f.pos);
   }
 
   for (var i = 0; i < 10; i++) {
@@ -421,10 +423,8 @@ function drawScene(gl, programInfo, deltaTime) {
   StopObstacles.forEach(element => {
     element.drawObstacle(gl, viewProjectionMatrix, shaderProgramText);
     if (element.detectCollision(p) && FlyBoostStatus === false) {
-      //console.log("THUKA");
       GameStatus = false;
     }
-    // console.log(element.pos)
   });
 
   DuckObstacles.forEach(element => {
@@ -438,7 +438,6 @@ function drawScene(gl, programInfo, deltaTime) {
   FlyingBoostList.forEach(element => {
       element.drawBoost(gl, viewProjectionMatrix, shaderProgramText);
       if (element.detectCollision(p)) {
-        console.log("COLLECTED");
         if (FlyBoostStatus === false) {
           FlyBoostAttainPos = p.pos[2];
         }
@@ -451,7 +450,6 @@ function drawScene(gl, programInfo, deltaTime) {
   JumpBoostList.forEach(element => {
     element.drawBoost(gl, viewProjectionMatrix, shaderProgramText);
     if (element.detectCollision(p)) {
-      console.log("HHHHHHHH");
       if (JumpBoostStatus === false) {
         JumpBoostAttainPos = p.pos[2];
       }
@@ -540,7 +538,6 @@ tick_elements = (gl) => {
 
   p.tick(playerJumpStatus, playerRightStatus, playerLeftStatus, FlyBoostStatus);
 
-  // console.log(FlyBoostAttainPos, p.pos, FlyBoostStatus, playerJumpStatus);
   if (FlyBoostAttainPos != undefined) {
     if (FlyBoostAttainPos - p.pos[2] >= 500) {
       FlyBoostStatus = false;
@@ -572,7 +569,6 @@ tick_elements = (gl) => {
   }
 
   if (pol.detectCollision(p)) {
-    console.log("Pakda Gaya");
     GameStatus = false;
   }
 
@@ -666,7 +662,6 @@ tick_elements = (gl) => {
 
   MovingTrains.forEach(element => {
     element.tick();
-    console.log(element.pos);
   });
 
 }
@@ -719,7 +714,6 @@ makeGreyScale = () => {
 
     GreyScale = false;
   }
-  // console.log(fsSourceText, fsSourceNorm);
 
 }
 
@@ -758,3 +752,35 @@ document.getElementById('resumeGame').addEventListener("click", function() {
   pauseStatus = false;
 
 });
+
+window.setInterval(function() {
+  if (ScoreMultiplier === true) {
+    var str = "||||||||||";
+    var val = Math.round((CoinBoostAttainPos - p.pos[2]) / 20);
+    str = str.slice(0, -1 * val);
+    $("#CoinBooster").text("Multiplier Remaining : " + str);
+  }
+  else {
+    $("#CoinBooster").text("");
+  }
+
+  if (FlyBoostStatus === true) {
+    var str = "||||||||||";
+    var val = Math.round((FlyBoostAttainPos - p.pos[2]) / 50);
+    str = str.slice(0, -1 * val);
+    $("#FlyingBooster").text("JetPack Boost Remaining : " + str);
+  }
+  else {
+    $("#FlyingBooster").text("");
+  }
+
+  if (JumpBoostStatus === true) {
+    var str = "||||||||||";
+    var val = Math.round((JumpBoostAttainPos - p.pos[2]) / 25);
+    str = str.slice(0, -1 * val);
+    $("#JumpBooster").text("Jump Boost Remaining : " + str);
+  }
+  else {
+    $("#JumpBooster").text("");
+  }
+}, 100);

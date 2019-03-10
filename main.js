@@ -65,6 +65,8 @@ function initialize() {
 
   shaderProgramNorm = undefined, shaderProgramText = undefined;
   dg = undefined;
+  oObstacleList = undefined;
+
 
 }
 
@@ -86,6 +88,7 @@ var pol;
 var dg;
 var FlyingBoostList;
 var JumpBoostList;
+var oObstacleList;
 var CoinBoostList;
 var score = 0;
 var GreyScale = false;
@@ -206,12 +209,18 @@ function main() {
   JumpBoostList = [];
   MovingTrains = [];
   CoinBoostList = [];
+  oObstacleList = [];
   FlyBoostAttainPos = undefined;
 
   for (var i = 0; i < 10; i++) {
 
     var f = new CoinBoost(gl, [getX(), 0, 4000 - i * 641]);
     CoinBoostList.push(f);
+  }
+
+  for (var i = 0; i < 10; i++) {
+    var f = new oscObsatcle(gl, [getX(), -2, 4000 - i * 723]);
+    oObstacleList.push(f);
   }
 
   for (var i = 0; i < 10; i++) {
@@ -479,6 +488,14 @@ function drawScene(gl, programInfo, deltaTime) {
       CoinBoostAttainPos = p.pos[2];
     }
   })
+
+  oObstacleList.forEach(element => {
+    element.drawObstacle(gl, viewProjectionMatrix, shaderProgramText);
+    if (element.detectCollision(p, playerJumpStatus, playerDuck) === true && FlyBoostStatus === false) {
+      if (speed >= 0.2)
+        speed -= 0.2;
+    }
+  });
 }
 
 //
@@ -679,6 +696,10 @@ tick_elements = (gl) => {
   else {
     dg.pos = [p.pos[0], 0, p.pos[2] - 40];
   }
+
+  oObstacleList.forEach(element => {
+    element.tick();
+  });
 
 
 }

@@ -64,6 +64,7 @@ function initialize() {
   MovingTrains = undefined;
 
   shaderProgramNorm = undefined, shaderProgramText = undefined;
+  dg = undefined;
 
 }
 
@@ -82,6 +83,7 @@ var r2;
 var w;
 var p;
 var pol;
+var dg;
 var FlyingBoostList;
 var JumpBoostList;
 var CoinBoostList;
@@ -243,6 +245,7 @@ function main() {
   w = new walls(gl, [0, -2, 3800]);
   p = new player(gl, [-7, 0, 3970]);
   pol = new police(gl, [-7, 0, 4000]);
+  dg = new doggy(gl, [-7.2, 0, 4000]);
   DuckObstacles = [];
   StopObstacles = [];
 
@@ -416,6 +419,8 @@ function drawScene(gl, programInfo, deltaTime) {
   w.drawGround(gl, viewProjectionMatrix, shaderProgramWall);
   p.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
   pol.drawCube(gl, viewProjectionMatrix, programInfo);
+  dg.drawDog(gl, viewProjectionMatrix, shaderProgramText);
+
   coin_arr.forEach(element => {
     element.drawCoin(gl, viewProjectionMatrix, shaderProgramText);
   });
@@ -624,6 +629,10 @@ tick_elements = (gl) => {
     });
   }
 
+  if (p.pos[0] != pol.pos[0]) {
+    pol.pos[0] = p.pos[0];
+  }
+
   toBeDeleted = undefined;
 
   for (let i = 0; i < DuckObstacles.length; i += 1) {
@@ -663,6 +672,14 @@ tick_elements = (gl) => {
   MovingTrains.forEach(element => {
     element.tick();
   });
+
+  if (FlyBoostStatus === false) {
+    dg.pos = [pol.pos[0] - 2.5, pol.pos[1], pol.pos[2]];
+  }
+  else {
+    dg.pos = [p.pos[0], 0, p.pos[2] - 40];
+  }
+
 
 }
 
